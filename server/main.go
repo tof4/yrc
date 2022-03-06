@@ -3,40 +3,56 @@ package main
 import (
 	"bufio"
 	"errors"
-	"fmt"
+	"log"
 	"net"
+	"sort"
 )
 
+type yrcServer struct {
+	listener net.Listener
+	clients  []yrcClient
+}
+
+type yrcClient struct {
+	connection net.Conn
+	id         int
+}
+
+var server yrcServer
+
 func main() {
-	fmt.Println("Starting YRC")
+	log.Println("Starting YRC")
+	startServer()
+	listenClients()
+	defer server.listener.Close()
+}
 
-	PORT := ":9999"
-
-	var activeConnections []net.Conn
-
-	listener, err := net.Listen("tcp", PORT)
+func startServer() {
+	l, err := net.Listen("tcp", ":9999")
 	if err != nil {
-		fmt.Println(err)
+		log.Fatal(err)
 		return
 	}
-	defer listener.Close()
 
+	server = yrcServer{listener: l}
+}
+
+func listenClients() {
 	for {
-		connection, err := listener.Accept()
+		connection, err := server.listener.Accept()
 		if err != nil {
-			fmt.Println(err)
+			log.Fatal(err)
 			return
 		}
 
-		go handleConnection(connection, &activeConnections)
+		go handleConnection(connection)
 	}
 }
 
-func handleConnection(connection net.Conn, activeConnections *[]net.Conn) {
-	fmt.Printf("New connection: %s\n", connection.RemoteAddr().String())
-	*activeConnections = append(*activeConnections, connection)
-	fmt.Println(len(*activeConnections))
-
+func handleConnection(connection net.Conn) {
+	log.Println("New connection:", connection.RemoteAddr())
+	client := yrcClient{connection: connection, id: len(server.clients)}
+	server.clients = append(server.clients, client)
 	reader := bufio.NewReader(connection)
 
 	for {
@@ -44,21 +60,31 @@ func handleConnection(connection net.Conn, activeConnections *[]net.Conn) {
 		if err != nil {
 
 			if errors.As(err, &bufio.ErrFinalToken) {
-				connection.Close()
+				handleDisconnect(client)
 				break
 			} else {
-				fmt.Println(err)
+				log.Println(err)
 			}
 			return
 		}
 
-		handleMessage(string(message), activeConnections)
+		handleMessage(string(message))
 	}
-	fmt.Printf("Disconnected: %s\n", connection.RemoteAddr().String())
 }
 
-func handleMessage(message string, activeConnections *[]net.Conn) {
-	for _, c := range *activeConnections {
-		c.Write([]byte(message))
+func handleDisconnect(client yrcClient) {
+	log.Println("Disconnected:", client.connection.RemoteAddr())
+
+	i := sort.Search(len(server.clients), func(i int) bool {
+		return int(server.clients[i].id) == client.id
+	})
+
+	server.clients[i] = server.clients[len(server.clients)-1]
+	server.clients = server.clients[:len(server.clients)-1]
+}
+
+func handleMessage(message string) {
+	for _, client := range server.clients {
+		client.connection.Write([]byte(message))
 	}
 }
