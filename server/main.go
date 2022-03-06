@@ -5,7 +5,6 @@ import (
 	"errors"
 	"log"
 	"net"
-	"sort"
 )
 
 type yrcServer struct {
@@ -68,23 +67,18 @@ func handleConnection(connection net.Conn) {
 			return
 		}
 
-		handleMessage(string(message))
+		handleMessage(string(message), client)
 	}
 }
 
 func handleDisconnect(client yrcClient) {
 	log.Println("Disconnected:", client.connection.RemoteAddr())
 
-	i := sort.Search(len(server.clients), func(i int) bool {
-		return int(server.clients[i].id) == client.id
-	})
-
-	server.clients[i] = server.clients[len(server.clients)-1]
-	server.clients = server.clients[:len(server.clients)-1]
-}
-
-func handleMessage(message string) {
-	for _, client := range server.clients {
-		client.connection.Write([]byte(message))
+	for i, c := range server.clients {
+		if c.id == client.id {
+			server.clients[i] = server.clients[len(server.clients)-1]
+			server.clients = server.clients[:len(server.clients)-1]
+			break
+		}
 	}
 }
