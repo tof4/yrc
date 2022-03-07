@@ -15,6 +15,7 @@ type yrcServer struct {
 type yrcClient struct {
 	connection net.Conn
 	id         int
+	nickname   string
 }
 
 var server yrcServer
@@ -50,12 +51,17 @@ func listenClients() {
 
 func handleConnection(connection net.Conn) {
 	log.Println("New connection:", connection.RemoteAddr())
-	client := yrcClient{connection: connection, id: len(server.clients)}
+
+	client := yrcClient{
+		connection: connection,
+		id:         len(server.clients),
+		nickname:   "default"}
+
 	server.clients = append(server.clients, client)
 	reader := bufio.NewReader(connection)
 
 	for {
-		message, err := reader.ReadString('\n')
+		command, err := reader.ReadString('\n')
 		if err != nil {
 
 			if errors.As(err, &bufio.ErrFinalToken) {
@@ -67,7 +73,7 @@ func handleConnection(connection net.Conn) {
 			return
 		}
 
-		handleMessage(string(message), client)
+		handleCommand(string(command), &client)
 	}
 }
 
