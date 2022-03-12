@@ -1,9 +1,10 @@
 package main
 
-import "strings"
+import (
+	"strings"
+)
 
 func handleCommand(command string, sender *yrcClient) {
-
 	argumets := strings.Split(command, "/")
 
 	switch argumets[0] {

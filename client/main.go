@@ -19,6 +19,9 @@ var (
 )
 
 func main() {
+
+	go connect("127.0.0.1:9999")
+
 	application, err := gtk.ApplicationNew(appId, glib.APPLICATION_FLAGS_NONE)
 	errorCheck(err)
 	application.Connect("startup", func() {
@@ -30,11 +33,6 @@ func main() {
 
 		builder, err := gtk.BuilderNewFromFile("window.glade")
 		errorCheck(err)
-
-		signals := map[string]interface{}{
-			"on_main_window_destroy": onMainWindowDestroy,
-		}
-		builder.ConnectSignals(signals)
 
 		winObj, err := builder.GetObject("main_window")
 		chatObj, _ := builder.GetObject("chat")
@@ -69,22 +67,23 @@ func errorCheck(e error) {
 	}
 }
 
-func onMainWindowDestroy() {
-	log.Println("onMainWindowDestroy")
-}
-
 func onKeyPressed(key gdk.EventKey) {
 	if key.KeyVal() == gdk.KEY_Return {
 		text, _ := input.GetText()
-		label, _ := gtk.LabelNew(text)
-		label.SetXAlign(0)
-		label.SetLineWrapMode(pango.WRAP_WORD_CHAR)
-		label.SetLineWrap(true)
-		input.DeleteText(0, -1)
-		chat.Insert(label, -1)
-		chat.ShowAll()
-		adj := scrolledWindow.GetVAdjustment()
-		adj.SetUpper(adj.GetUpper() + adj.GetPageSize())
-		adj.SetValue(adj.GetUpper())
+		sendMessage(text)
+		writeToChat(text)
 	}
+}
+
+func writeToChat(message string) {
+	label, _ := gtk.LabelNew(message)
+	label.SetXAlign(0)
+	label.SetLineWrapMode(pango.WRAP_WORD_CHAR)
+	label.SetLineWrap(true)
+	input.DeleteText(0, -1)
+	chat.Insert(label, -1)
+	chat.ShowAll()
+	adj := scrolledWindow.GetVAdjustment()
+	adj.SetUpper(adj.GetUpper() + adj.GetPageSize())
+	adj.SetValue(adj.GetUpper())
 }
