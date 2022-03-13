@@ -7,10 +7,14 @@ import (
 )
 
 type uiObjects struct {
-	window              *gtk.Window
-	chat                *gtk.ListBox
-	input               *gtk.Entry
-	scrolledWindow      *gtk.ScrolledWindow
+	window         *gtk.Window
+	chat           *gtk.ListBox
+	input          *gtk.Entry
+	scrolledWindow *gtk.ScrolledWindow
+
+	menuConnectButton    *gtk.MenuItem
+	menuDisconnectButton *gtk.MenuItem
+
 	connectDialog       *gtk.Dialog
 	connectInputAddress *gtk.Entry
 	connectInputPort    *gtk.Entry
@@ -23,20 +27,24 @@ var (
 
 func bindUiObjects() {
 	ui.window = getUiObject("main-window").(*gtk.Window)
-	ui.connectDialog = getUiObject("connect-dialog").(*gtk.Dialog)
 	ui.chat = getUiObject("chat").(*gtk.ListBox)
 	ui.input = getUiObject("input").(*gtk.Entry)
-	ui.scrolledWindow = getUiObject("scrolledWindow").(*gtk.ScrolledWindow)
+	ui.scrolledWindow = getUiObject("scrolled-window").(*gtk.ScrolledWindow)
+
+	ui.menuConnectButton = getUiObject("menu-connect-button").(*gtk.MenuItem)
+	ui.menuDisconnectButton = getUiObject("menu-disconnect-button").(*gtk.MenuItem)
+
+	ui.connectDialog = getUiObject("connect-dialog").(*gtk.Dialog)
 	ui.connectInputAddress = getUiObject("connect-input-address").(*gtk.Entry)
 	ui.connectInputPort = getUiObject("connect-input-port").(*gtk.Entry)
 }
 
 func bindSignals() {
 	signals := map[string]interface{}{
-		"menu-file-quit":    onMenuFileQuit,
-		"menu-file-connect": onMenuFileConnect,
-		"connect-button":    onConnectButton,
-		"key-press-event":   onKeyPressed,
+		"menu-quit":       onMenuQuit,
+		"menu-connect":    onMenuConnect,
+		"menu-disconnect": onMenuDisconnect,
+		"connect-button":  onConnectDialogButton,
 	}
 
 	builder.ConnectSignals(signals)
@@ -49,4 +57,16 @@ func bindSignals() {
 func getUiObject(id string) glib.IObject {
 	object, _ := builder.GetObject(id)
 	return object
+}
+
+func switchConnectButton() {
+	glib.IdleAdd(func() {
+		if ui.menuConnectButton.GetVisible() {
+			ui.menuConnectButton.Hide()
+			ui.menuDisconnectButton.Show()
+		} else {
+			ui.menuConnectButton.Show()
+			ui.menuDisconnectButton.Hide()
+		}
+	})
 }

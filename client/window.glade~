@@ -120,19 +120,19 @@
                       </object>
                     </child>
                     <child>
-                      <object class="GtkMenuItem" id="menu-disconnect-button">
-                        <property name="can-focus">False</property>
-                        <property name="label" translatable="yes">Disconnect</property>
-                        <signal name="activate" handler="menu-disconnect" swapped="no"/>
-                      </object>
-                    </child>
-                    <child>
                       <object class="GtkMenuItem">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes">Quit</property>
                         <property name="use-underline">True</property>
                         <signal name="activate" handler="menu-quit" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkMenuItem" id="menu-disconnect-button">
+                        <property name="can-focus">False</property>
+                        <property name="label" translatable="yes">Disconnect</property>
+                        <signal name="activate" handler="menu-disconnect" swapped="no"/>
                       </object>
                     </child>
                   </object>
