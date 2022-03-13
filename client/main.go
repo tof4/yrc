@@ -13,17 +13,17 @@ import (
 const appId = "com.github.gotk3.gotk3-examples.glade"
 
 var (
-	chat           *gtk.ListBox
-	input          *gtk.Entry
-	scrolledWindow *gtk.ScrolledWindow
+	builder             *gtk.Builder
+	chat                *gtk.ListBox
+	input               *gtk.Entry
+	scrolledWindow      *gtk.ScrolledWindow
+	connectDialog       *gtk.Dialog
+	connectInputAddress *gtk.Entry
+	connectInputPort    *gtk.Entry
 )
 
 func main() {
-
-	go connect("127.0.0.1:9999")
-
-	application, err := gtk.ApplicationNew(appId, glib.APPLICATION_FLAGS_NONE)
-	errorCheck(err)
+	application, _ := gtk.ApplicationNew(appId, glib.APPLICATION_FLAGS_NONE)
 	application.Connect("startup", func() {
 		log.Println("application startup")
 	})
@@ -31,20 +31,22 @@ func main() {
 	application.Connect("activate", func() {
 		log.Println("application activate")
 
-		builder, err := gtk.BuilderNewFromFile("window.glade")
-		errorCheck(err)
+		builder, _ = gtk.BuilderNewFromFile("window.glade")
+		signals := map[string]interface{}{
+			"menu-file-quit":    onMenuFileQuit,
+			"menu-file-connect": onMenuFileConnect,
+			"connect-button":    onConnectButton,
+		}
 
-		winObj, err := builder.GetObject("main_window")
-		chatObj, _ := builder.GetObject("chat")
-		inputObj, _ := builder.GetObject("input")
-		scrolledWindowObj, _ := builder.GetObject("scrolledWindow")
+		builder.ConnectSignals(signals)
 
-		win, _ := winObj.(*gtk.Window)
-		chat = chatObj.(*gtk.ListBox)
-		input = inputObj.(*gtk.Entry)
-		scrolledWindow = scrolledWindowObj.(*gtk.ScrolledWindow)
-
-		errorCheck(err)
+		win := getUiObject("main-window").(*gtk.Window)
+		connectDialog = getUiObject("connect-dialog").(*gtk.Dialog)
+		chat = getUiObject("chat").(*gtk.ListBox)
+		input = getUiObject("input").(*gtk.Entry)
+		scrolledWindow = getUiObject("scrolledWindow").(*gtk.ScrolledWindow)
+		connectInputAddress = getUiObject("connect-input-address").(*gtk.Entry)
+		connectInputPort = getUiObject("connect-input-port").(*gtk.Entry)
 
 		win.Show()
 		application.AddWindow(win)
@@ -61,10 +63,9 @@ func main() {
 	os.Exit(application.Run(os.Args))
 }
 
-func errorCheck(e error) {
-	if e != nil {
-		log.Panic(e)
-	}
+func getUiObject(id string) glib.IObject {
+	object, _ := builder.GetObject(id)
+	return object
 }
 
 func onKeyPressed(key gdk.EventKey) {
