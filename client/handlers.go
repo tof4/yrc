@@ -25,6 +25,6 @@ func onKeyPressed(key gdk.EventKey) {
 	if key.KeyVal() == gdk.KEY_Return {
 		text, _ := ui.input.GetText()
 		sendMessage(text)
-		writeToChat(text)
+		logWriteMessage("me: " + text)
 	}
 }

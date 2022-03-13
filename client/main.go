@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	application, _ := gtk.ApplicationNew("pl.youkai.yrc.gtk", glib.APPLICATION_FLAGS_NONE)
+	application, _ := gtk.ApplicationNew("pl.youkai.yrc.gtk", glib.APPLICATION_NON_UNIQUE)
 
 	application.Connect("activate", func() {
 		builder, _ = gtk.BuilderNewFromFile("window.glade")
