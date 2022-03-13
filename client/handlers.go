@@ -2,10 +2,12 @@ package main
 
 import (
 	"os"
+
+	"github.com/gotk3/gotk3/gdk"
 )
 
 func onMenuFileConnect() {
-	connectDialog.Show()
+	ui.connectDialog.Show()
 }
 
 func onMenuFileQuit() {
@@ -13,8 +15,16 @@ func onMenuFileQuit() {
 }
 
 func onConnectButton() {
-	address, _ := connectInputAddress.GetText()
-	port, _ := connectInputPort.GetText()
-	connectDialog.Hide()
+	address, _ := ui.connectInputAddress.GetText()
+	port, _ := ui.connectInputPort.GetText()
+	ui.connectDialog.Hide()
 	go connect(address + ":" + port)
+}
+
+func onKeyPressed(key gdk.EventKey) {
+	if key.KeyVal() == gdk.KEY_Return {
+		text, _ := ui.input.GetText()
+		sendMessage(text)
+		writeToChat(text)
+	}
 }

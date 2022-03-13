@@ -2,7 +2,6 @@ package main
 
 import (
 	"bufio"
-	"log"
 	"net"
 	"strings"
 
@@ -14,13 +13,17 @@ var connection net.Conn
 func connect(address string) {
 	tcpAddr, err := net.ResolveTCPAddr("tcp", address)
 	if err != nil {
-		log.Println("Resolve failed:", err.Error())
+		writeToChat(err.Error())
+		return
 	}
 
 	connection, err = net.DialTCP("tcp", nil, tcpAddr)
 	if err != nil {
-		log.Println("Dial failed:", err.Error())
+		writeToChat(err.Error())
+		return
 	}
+
+	writeToChat("Connected with: " + connection.RemoteAddr().String())
 
 	connbuf := bufio.NewReader(connection)
 	for {
