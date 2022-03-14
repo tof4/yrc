@@ -1,4 +1,4 @@
-package main
+package server
 
 import (
 	"bufio"
@@ -18,10 +18,10 @@ func handleConnect(connection net.Conn) {
 
 	client := yrcClient{
 		connection: connection,
-		id:         len(server.clients),
+		id:         len(clients),
 		nickname:   "default"}
 
-	server.clients = append(server.clients, client)
+	clients = append(clients, client)
 	reader := bufio.NewReader(connection)
 	eventJoin(&client)
 
@@ -45,10 +45,10 @@ func handleConnect(connection net.Conn) {
 func handleDisconnect(client yrcClient) {
 	log.Println("Disconnected:", client.connection.RemoteAddr())
 
-	for i, c := range server.clients {
+	for i, c := range clients {
 		if c.id == client.id {
-			server.clients[i] = server.clients[len(server.clients)-1]
-			server.clients = server.clients[:len(server.clients)-1]
+			clients[i] = clients[len(clients)-1]
+			clients = clients[:len(clients)-1]
 			break
 		}
 	}

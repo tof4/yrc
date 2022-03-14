@@ -1,22 +1,18 @@
-package main
+package server
 
 import (
 	"log"
 	"net"
 )
 
-type yrcServer struct {
-	listener net.Listener
-	clients  []yrcClient
-}
+var listener net.Listener
+var clients []yrcClient
 
-var server yrcServer
-
-func main() {
+func Initialize() {
 	log.Println("Starting YRC")
 	startServer()
 	listenClients()
-	defer server.listener.Close()
+	defer listener.Close()
 }
 
 func startServer() {
@@ -26,12 +22,12 @@ func startServer() {
 		return
 	}
 
-	server = yrcServer{listener: l}
+	listener = l
 }
 
 func listenClients() {
 	for {
-		connection, err := server.listener.Accept()
+		connection, err := listener.Accept()
 		if err != nil {
 			log.Fatal(err)
 			return

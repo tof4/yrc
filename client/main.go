@@ -1,4 +1,4 @@
-package main
+package client
 
 import (
 	"os"
@@ -7,11 +7,11 @@ import (
 	"github.com/gotk3/gotk3/gtk"
 )
 
-func main() {
+func Initialize() {
 	application, _ := gtk.ApplicationNew("pl.youkai.yrc.gtk", glib.APPLICATION_NON_UNIQUE)
 
 	application.Connect("activate", func() {
-		builder, _ = gtk.BuilderNewFromFile("window.glade")
+		builder, _ = gtk.BuilderNewFromFile("../../client/window.glade")
 		bindUiObjects()
 		bindSignals()
 		application.AddWindow(ui.window)

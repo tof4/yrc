@@ -1,4 +1,4 @@
-module github.com/tof4/yrc/client
+module github.com/tof4/yrc
 
 go 1.16
 

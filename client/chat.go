@@ -1,4 +1,4 @@
-package main
+package client
 
 import (
 	"github.com/gotk3/gotk3/glib"

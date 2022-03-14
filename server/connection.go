@@ -1,10 +1,10 @@
-package main
+package server
 
 import "fmt"
 
 func broadcast(sender yrcClient, data string) {
 
-	receivers := server.clients
+	receivers := clients
 
 	for i, c := range receivers {
 		if c.id == sender.id {
