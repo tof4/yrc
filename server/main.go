@@ -59,6 +59,7 @@ func handleConnection(connection net.Conn) {
 
 	server.clients = append(server.clients, client)
 	reader := bufio.NewReader(connection)
+	eventJoin(&client)
 
 	for {
 		command, err := reader.ReadString('\n')
