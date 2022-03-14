@@ -3,10 +3,17 @@ package main
 import (
 	"bufio"
 	"net"
-	"strings"
 )
 
-var connection net.Conn
+type yrcUser struct {
+	id       int
+	nickname string
+}
+
+var (
+	connection     net.Conn
+	connectedUsers []yrcUser
+)
 
 func connect(address string) {
 	tcpAddr, err := net.ResolveTCPAddr("tcp", address)
@@ -32,7 +39,7 @@ func connect(address string) {
 		}
 
 		if len(str) > 0 {
-			logWriteMessage(strings.TrimSpace(str))
+			handleEvent(str)
 		}
 	}
 
