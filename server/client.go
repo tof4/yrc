@@ -3,6 +3,7 @@ package server
 import (
 	"bufio"
 	"errors"
+	"fmt"
 	"log"
 	"net"
 )
@@ -23,7 +24,7 @@ func handleConnect(connection net.Conn) {
 
 	clients = append(clients, client)
 	reader := bufio.NewReader(connection)
-	eventJoin(&client)
+	broadcast(client, fmt.Sprintf("joined %d as %s", client.id, client.nickname))
 
 	for {
 		command, err := reader.ReadString('\n')
