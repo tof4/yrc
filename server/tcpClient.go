@@ -13,14 +13,16 @@ type tcpClient struct {
 
 func handleTcpConnect(connection net.Conn) {
 
-	newTcpClient := tcpClient{session: connection}
+	newTcpClient := tcpClient{
+		session: connection,
+	}
 	client := yrcClient{
 		networkInterface: newTcpClient,
 		id:               len(clients),
 		nickname:         "default"}
 
 	clients = append(clients, client)
-	handleConnect(&client)
+	handleConnect(client)
 
 	reader := bufio.NewReader(connection)
 	for {
@@ -28,7 +30,7 @@ func handleTcpConnect(connection net.Conn) {
 		if err != nil {
 
 			if errors.As(err, &bufio.ErrFinalToken) {
-				handleDisconnect(&client)
+				handleDisconnect(client)
 				break
 			} else {
 				log.Println(err)
@@ -36,7 +38,7 @@ func handleTcpConnect(connection net.Conn) {
 			return
 		}
 
-		handleCommand(string(command), &client)
+		handleCommand(string(command), client)
 	}
 }
 
@@ -46,4 +48,8 @@ func (client tcpClient) sendData(data string) {
 
 func (client tcpClient) getAddress() net.Addr {
 	return client.session.RemoteAddr()
+}
+
+func (client tcpClient) disconnect() {
+	client.session.Close()
 }

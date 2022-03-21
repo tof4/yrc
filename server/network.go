@@ -2,7 +2,7 @@ package server
 
 import "fmt"
 
-func broadcast(sender *yrcClient, data string) {
+func broadcast(sender yrcClient, data string) {
 
 	receivers := clients
 

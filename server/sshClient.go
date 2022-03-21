@@ -1,6 +1,9 @@
 package server
 
 import (
+	"bufio"
+	"errors"
+	"log"
 	"net"
 
 	"github.com/gliderlabs/ssh"
@@ -14,19 +17,31 @@ type sshClient struct {
 func handleSshConnect(session ssh.Session) {
 
 	newSshClient := sshClient{session: session}
+
 	client := yrcClient{
 		networkInterface: newSshClient,
 		id:               len(clients),
 		nickname:         "default"}
 
 	clients = append(clients, client)
+	handleConnect(client)
 
 	terminal := term.NewTerminal(session, "")
-	line := ""
 	for {
-		line, _ = terminal.ReadLine()
-		handleCommand(line, &client)
+		line, err := terminal.ReadLine()
+		if err != nil {
+
+			if errors.As(err, &bufio.ErrFinalToken) {
+				handleDisconnect(client)
+				break
+			} else {
+				log.Println(err)
+			}
+			return
+		}
+		handleCommand(line, client)
 	}
+
 }
 
 func (client sshClient) sendData(data string) {
@@ -35,4 +50,8 @@ func (client sshClient) sendData(data string) {
 
 func (client sshClient) getAddress() net.Addr {
 	return client.session.RemoteAddr()
+}
+
+func (client sshClient) disconnect() {
+	client.session.Close()
 }

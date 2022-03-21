@@ -9,6 +9,7 @@ import (
 type clientNetworkInterface interface {
 	sendData(data string)
 	getAddress() net.Addr
+	disconnect()
 }
 
 type yrcClient struct {
@@ -17,16 +18,16 @@ type yrcClient struct {
 	nickname         string
 }
 
-func handleConnect(sender *yrcClient) {
-	log.Println("Connected:", sender.networkInterface.getAddress())
-	broadcast(sender, fmt.Sprintf("joined %d as %s", sender.id, sender.nickname))
+func handleConnect(client yrcClient) {
+	log.Println("Connected:", client.networkInterface.getAddress())
+	broadcast(client, fmt.Sprintf("joined %d as %s", client.id, client.nickname))
 }
 
-func handleDisconnect(sender *yrcClient) {
-	log.Println("Disconnected:", sender.networkInterface.getAddress())
+func handleDisconnect(client yrcClient) {
+	log.Println("Disconnected:", client.networkInterface.getAddress())
 
 	for i, c := range clients {
-		if c.id == sender.id {
+		if c.id == client.id {
 			clients[i] = clients[len(clients)-1]
 			clients = clients[:len(clients)-1]
 			break

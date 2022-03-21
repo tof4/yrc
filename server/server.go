@@ -13,17 +13,8 @@ var clients []yrcClient
 func Initialize() {
 	go listenSsh()
 	startServer()
-	listenClients()
+	listenTcp()
 	defer tcpListener.Close()
-}
-
-func listenSsh() {
-	ssh.Handle(func(s ssh.Session) {
-		handleSshConnect(s)
-	})
-
-	log.Println("Starting SSH server on port 9998")
-	log.Fatal(ssh.ListenAndServe(":9998", nil))
 }
 
 func startServer() {
@@ -37,7 +28,7 @@ func startServer() {
 	tcpListener = l
 }
 
-func listenClients() {
+func listenTcp() {
 	for {
 		c, err := tcpListener.Accept()
 		if err != nil {
@@ -47,4 +38,13 @@ func listenClients() {
 
 		go handleTcpConnect(c)
 	}
+}
+
+func listenSsh() {
+	ssh.Handle(func(s ssh.Session) {
+		handleSshConnect(s)
+	})
+
+	log.Println("Starting SSH server on port 9998")
+	log.Fatal(ssh.ListenAndServe(":9998", nil))
 }
