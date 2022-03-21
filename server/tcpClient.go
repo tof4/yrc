@@ -38,7 +38,7 @@ func handleTcpConnect(connection net.Conn) {
 			return
 		}
 
-		handleCommand(string(command), client)
+		handleCommand(command, client)
 	}
 }
 

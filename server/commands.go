@@ -9,7 +9,7 @@ import (
 )
 
 func handleCommand(command string, client yrcClient) {
-	argumets := strings.Split(command, " ")
+	argumets := strings.Split(strings.TrimSpace(command), " ")
 
 	switch argumets[0] {
 	case "send":
