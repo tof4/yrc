@@ -23,7 +23,7 @@ func handleCommand(command string, sender *yrcClient) {
 func send(sender *yrcClient, argumets []string) {
 	message := common.GetStringBetween(strings.Join(argumets, " "), "'")
 	timestamp := time.Now().Format("2006-01-02 15:04:05")
-	broadcast(*sender, fmt.Sprintf("message from %d at %s %s", sender.id, timestamp, message))
+	broadcast(sender, fmt.Sprintf("message from %d at %s %s", sender.id, timestamp, message))
 }
 
 func nick(sender *yrcClient, argumets []string) {

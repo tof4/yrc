@@ -3,36 +3,48 @@ package server
 import (
 	"log"
 	"net"
+
+	"github.com/gliderlabs/ssh"
 )
 
-var listener net.Listener
+var tcpListener net.Listener
 var clients []yrcClient
 
 func Initialize() {
-	log.Println("Starting YRC")
+	go listenSsh()
 	startServer()
 	listenClients()
-	defer listener.Close()
+	defer tcpListener.Close()
+}
+
+func listenSsh() {
+	ssh.Handle(func(s ssh.Session) {
+		handleSshConnect(s)
+	})
+
+	log.Println("Starting SSH server on port 9998")
+	log.Fatal(ssh.ListenAndServe(":9998", nil))
 }
 
 func startServer() {
+	log.Println("Starting TCP server on port 9999")
 	l, err := net.Listen("tcp", ":9999")
 	if err != nil {
 		log.Fatal(err)
 		return
 	}
 
-	listener = l
+	tcpListener = l
 }
 
 func listenClients() {
 	for {
-		connection, err := listener.Accept()
+		c, err := tcpListener.Accept()
 		if err != nil {
 			log.Fatal(err)
 			return
 		}
 
-		go handleConnect(connection)
+		go handleTcpConnect(c)
 	}
 }

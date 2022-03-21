@@ -2,7 +2,7 @@ package server
 
 import "fmt"
 
-func broadcast(sender yrcClient, data string) {
+func broadcast(sender *yrcClient, data string) {
 
 	receivers := clients
 
@@ -15,6 +15,6 @@ func broadcast(sender yrcClient, data string) {
 	}
 
 	for _, receiver := range receivers {
-		receiver.connection.Write([]byte(fmt.Sprintf("%s\n", data)))
+		receiver.networkInterface.sendData(fmt.Sprintf("%s\n", data))
 	}
 }
