@@ -1,8 +1,11 @@
 package common
 
-import "regexp"
+import (
+	"regexp"
+	"strings"
+)
 
-func GetStringBetween(source string, separator string) string {
-	rx := regexp.MustCompile(`(?s)` + regexp.QuoteMeta(separator) + `(.*?)` + regexp.QuoteMeta(separator))
-	return rx.FindString(source)
+func GetStringBetweenQuotes(source string) string {
+	r, _ := regexp.Compile("'(.*?)'")
+	return strings.TrimSpace(r.FindStringSubmatch(source)[1])
 }
