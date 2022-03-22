@@ -21,6 +21,10 @@ API is designed to be both human and machine readable. It's similar to SQL.
 * Connection to YRC server is made via SSH.
 * Regular TCP socket is optional but not recommended as YRC does not provide authorization or secure connection.
 
+## Definitions
+
+* `id` - User's nickname. Have to be unique.
+* `timestamp` - Date and time in `YYYY-MM-DD HH:mm:ss`
 
 ## Commands
 
@@ -36,8 +40,3 @@ API is designed to be both human and machine readable. It's similar to SQL.
 | ------- | -------------------------------------------------- | --------------------- | ------------------------------------------------------------ |
 | message | `message from [id] at '[timestamp]' : '[content]'` | New message received. | `message from test at '1970-01-01 00:00:00' : 'hello world'` |
 | renamed | `renamed [id] to [new id]`                         | User changed nickname | `renamed 'default' to 'new name'`                            |
-
-## Definitions
-
-* `id` - User's nickname. Have to be unique.
-* `timestamp` - Date and time in `YYYY-MM-DD HH:mm:ss`
