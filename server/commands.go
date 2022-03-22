@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"strings"
 	"time"
-
-	"github.com/tof4/yrc/common"
 )
 
 func handleCommand(command string, client yrcClient) {
@@ -24,14 +22,14 @@ func handleCommand(command string, client yrcClient) {
 }
 
 func send(client yrcClient, argumets []string) {
-	message := common.GetStringBetweenQuotes(strings.Join(argumets, " "))
+	message := getStringBetweenQuotes(strings.Join(argumets, " "))
 	timestamp := time.Now().Format("2006-01-02 15:04:05")
 	broadcast(client, fmt.Sprintf("message from %d at %s '%s'", client.id, timestamp, message))
 }
 
 func nick(client yrcClient, argumets []string) {
 	oldNickname := client.nickname
-	client.nickname = common.GetStringBetweenQuotes(strings.Join(argumets, " "))
+	client.nickname = getStringBetweenQuotes(strings.Join(argumets, " "))
 	broadcast(client, fmt.Sprintf("renamed %d from %s to '%s'", client.id, oldNickname, client.nickname))
 }
 

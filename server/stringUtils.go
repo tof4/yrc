@@ -1,11 +1,11 @@
-package common
+package server
 
 import (
 	"regexp"
 	"strings"
 )
 
-func GetStringBetweenQuotes(source string) string {
+func getStringBetweenQuotes(source string) string {
 	r, _ := regexp.Compile("'(.*?)'")
 	return strings.TrimSpace(r.FindStringSubmatch(source)[1])
 }
