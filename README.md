@@ -19,7 +19,6 @@ API is designed to be both human and machine readable. It's similar to SQL.
 ## Server
 
 * Connection to YRC server is made via SSH.
-* Regular TCP socket is optional but not recommended as YRC does not provide authorization or secure connection.
 
 ## Definitions
 
