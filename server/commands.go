@@ -23,14 +23,14 @@ func handleCommand(command string, client yrcClient) {
 
 func send(client yrcClient, argumets []string) {
 	message := getStringBetweenQuotes(strings.Join(argumets, " "))
-	timestamp := time.Now().Format("2006-01-02 15:04:05")
-	broadcast(client, fmt.Sprintf("message from %s at '%s' : '%s'", client.nickname, timestamp, message))
+	timestamp := time.Now().Format("2006-01-02|15:04:05")
+	broadcast(client, fmt.Sprintf(`message from %s at %s "%s"`, client.nickname, timestamp, message))
 }
 
 func nick(client yrcClient, argumets []string) {
 	oldNickname := client.nickname
 	client.nickname = getStringBetweenQuotes(strings.Join(argumets, " "))
-	broadcast(client, fmt.Sprintf("renamed '%s' to '%s'", oldNickname, client.nickname))
+	broadcast(client, fmt.Sprintf(`renamed "%s" to "%s"`, oldNickname, client.nickname))
 }
 
 func exit(client yrcClient) {
