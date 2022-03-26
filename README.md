@@ -2,6 +2,16 @@
 
 Even more experimental than Lanchat!
 
+## Planned features
+
+* Channels and private messages
+* Chat history
+* SSH authorization
+
+## Not planned features
+
+* File transfer
+
 ## API
 
 API is designed to be both human and machine readable. It"s similar to SQL.
