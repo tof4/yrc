@@ -23,8 +23,10 @@ func handleCommand(command string, client yrcClient) {
 
 func send(client yrcClient, argumets []string) {
 	message := getStringBetweenQuotes(strings.Join(argumets, " "))
-	timestamp := time.Now().Format("2006-01-02|15:04:05")
-	broadcast(client, fmt.Sprintf(`message from %s at %s "%s"`, client.nickname, timestamp, message))
+	if validateMessage(message) {
+		timestamp := time.Now().Format("2006-01-02|15:04:05")
+		broadcast(client, fmt.Sprintf(`message from %s at %s "%s"`, client.nickname, timestamp, message))
+	}
 }
 
 func nick(client yrcClient, argumets []string) {
