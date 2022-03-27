@@ -22,13 +22,8 @@ func listenSsh() {
 	})
 
 	ssh.ListenAndServe(":9999", nil,
-		ssh.PasswordAuth(func(ctx ssh.Context, pass string) bool {
-			user, err := getUserByUsername(ctx.User())
-			if err != nil {
-				log.Println(err)
-				return false
-			}
-			return user.password == pass
+		ssh.PasswordAuth(func(ctx ssh.Context, password string) bool {
+			return authByPassword(ctx.User(), password)
 		}),
 	)
 }
