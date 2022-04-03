@@ -1,39 +1,42 @@
 package server
 
 import (
-	"database/sql"
 	"errors"
-	"fmt"
-	"log"
-
-	_ "github.com/mattn/go-sqlite3"
+	"os"
+	"path/filepath"
+	"strings"
 )
 
-var database *sql.DB
-
-func openDatabase() {
-	db, err := sql.Open("sqlite3", "yrc.db")
-	if err != nil {
-		log.Fatal(err)
-	}
-	database = db
+type databasePaths struct {
+	root     string
+	users    string
+	channels string
 }
 
-func getUserByUsername(username string) (userModel, error) {
+var paths databasePaths
 
-	rows, err := database.Query(fmt.Sprintf("SELECT * FROM Users WHERE Username = '%s'", username))
-	defer rows.Close()
+func openDatabase() {
+	paths.root = "ydb"
+	paths.users = filepath.Join(paths.root, "usr")
+	paths.channels = filepath.Join(paths.root, "chl")
+	err := os.MkdirAll(paths.users, os.ModePerm)
+	err = os.MkdirAll(paths.channels, os.ModePerm)
+	catch(err)
+}
 
-	if err != nil {
-		log.Fatal(err)
+func getUserPasswordHash(username string) (string, error) {
+	usersDir, err := os.Open(paths.users)
+	catch(err)
+	defer usersDir.Close()
+
+	list, _ := usersDir.Readdirnames(0)
+	for _, name := range list {
+		if name == username {
+			passwordHash, err := os.ReadFile(filepath.Join(paths.users, name, "passwordhash"))
+			catch(err)
+			return strings.TrimSpace(string(passwordHash)), nil
+		}
 	}
 
-	var user userModel
-
-	for rows.Next() {
-		err = rows.Scan(&user.id, &user.username, &user.password)
-		return user, err
-	}
-
-	return user, errors.New(fmt.Sprintf(`User "%s" not found`, username))
+	return "", errors.New("User not found")
 }

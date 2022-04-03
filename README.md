@@ -45,7 +45,20 @@ API is designed to be both human and machine readable. It"s similar to SQL.
 
 ## Events
 
-| Event   | Schema                                           | Description            | Example                                                    |
-| ------- | ------------------------------------------------ | ---------------------- | ---------------------------------------------------------- |
+| Event   | Schema                                           | Description            | Example                                                     |
+| ------- | ------------------------------------------------ | ---------------------- | ----------------------------------------------------------- |
 | message | `message from "[id]" at [timestamp] "[content]"` | New message received.  | `message from "test" at 1970-01-01\|00:00:00 "hello world"` |
-| renamed | `renamed "[id]" to "[new id]"`                   | User changed nickname. | `renamed "default" to "new name"`                          |
+| renamed | `renamed "[id]" to "[new id]"`                   | User changed nickname. | `renamed "default" to "new name"`                           |
+
+## Database
+
+Default server implemetation uses plain file system as database.
+
+* usr
+  * name
+    * passwordhash
+    * publickey
+* chl
+  * name
+    * messages
+    * subscribers
