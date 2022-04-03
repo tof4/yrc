@@ -13,9 +13,6 @@ func handleCommand(command string, client yrcClient) {
 	case "send":
 		send(client, argumets)
 
-	case "nick":
-		nick(client, argumets)
-
 	case "exit":
 		exit(client)
 	}
@@ -25,14 +22,8 @@ func send(client yrcClient, argumets []string) {
 	message := getStringBetweenQuotes(strings.Join(argumets, " "))
 	if validateMessage(message) {
 		timestamp := time.Now().Format("2006-01-02|15:04:05")
-		broadcast(client, fmt.Sprintf(`message from %s at %s "%s"`, client.nickname, timestamp, message))
+		broadcast(client, fmt.Sprintf(`message from %s at %s "%s"`, client.username, timestamp, message))
 	}
-}
-
-func nick(client yrcClient, argumets []string) {
-	oldNickname := client.nickname
-	client.nickname = getStringBetweenQuotes(strings.Join(argumets, " "))
-	broadcast(client, fmt.Sprintf(`renamed "%s" to "%s"`, oldNickname, client.nickname))
 }
 
 func exit(client yrcClient) {

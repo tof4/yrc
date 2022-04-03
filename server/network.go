@@ -7,10 +7,10 @@ func broadcast(sender yrcClient, data string) {
 	receivers := clients
 
 	for i, c := range receivers {
-		if c.id == sender.id {
+		if c.username == sender.username {
 			receivers[i] = receivers[len(receivers)-1]
 			receivers = receivers[:len(receivers)-1]
-			break
+			return
 		}
 	}
 

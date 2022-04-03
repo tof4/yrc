@@ -14,24 +14,23 @@ type clientNetworkInterface interface {
 
 type yrcClient struct {
 	networkInterface clientNetworkInterface
-	id               int
-	nickname         string
+	username         string
 }
 
 func handleConnect(client yrcClient) {
 	log.Println("Connected:", client.networkInterface.getAddress())
-	broadcast(client, fmt.Sprintf(`connected %d as "%s"`, client.id, client.nickname))
+	broadcast(client, fmt.Sprintf(`connected %s`, client.username))
 }
 
 func handleDisconnect(client yrcClient) {
 	log.Println("Disconnected:", client.networkInterface.getAddress())
-	broadcast(client, fmt.Sprintf(`disconnected "%d"`, client.id))
+	broadcast(client, fmt.Sprintf(`disconnected %s`, client.username))
 
 	for i, c := range clients {
-		if c.id == client.id {
+		if c.username == client.username {
 			clients[i] = clients[len(clients)-1]
 			clients = clients[:len(clients)-1]
-			break
+			return
 		}
 	}
 }
