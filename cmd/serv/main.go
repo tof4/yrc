@@ -1,7 +1,15 @@
 package main
 
-import "github.com/tof4/yrc/server"
+import (
+	"flag"
+
+	"github.com/tof4/yrc/server"
+)
 
 func main() {
-	server.Initialize()
+	port := flag.Int("p", 9999, "ssh server port")
+	rootPath := flag.String("d", "ydb", "database root path")
+	flag.Parse()
+
+	server.Initialize(*port, *rootPath)
 }

@@ -17,8 +17,8 @@ type databasePaths struct {
 
 var paths databasePaths
 
-func openDatabase() {
-	paths.root = "ydb"
+func openDatabase(rootPath string) {
+	paths.root = rootPath
 	paths.users = filepath.Join(paths.root, "usr")
 	paths.channels = filepath.Join(paths.root, "chl")
 	err := os.MkdirAll(paths.users, os.ModePerm)

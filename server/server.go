@@ -7,19 +7,18 @@ import (
 	"github.com/gliderlabs/ssh"
 )
 
-func Initialize() {
-	openDatabase()
-	listenSsh()
+func Initialize(port int, rootPath string) {
+	log.Println(fmt.Sprintf("Starting ssh server on port %d", port))
+	log.Println(fmt.Sprintf("Database set in %s", rootPath))
+	openDatabase(rootPath)
+	listenSsh(port)
 }
 
-func listenSsh() {
-	log.Println(fmt.Sprintf("Starting ssh server on port 9999"))
-
+func listenSsh(port int) {
 	ssh.Handle(func(s ssh.Session) {
 		handleSshConnect(s)
 	})
-
-	ssh.ListenAndServe(":9999", nil,
+	ssh.ListenAndServe(fmt.Sprintf(":%d", port), nil,
 		ssh.PasswordAuth(func(ctx ssh.Context, password string) bool {
 			return authByPassword(ctx.User(), password)
 		}),
