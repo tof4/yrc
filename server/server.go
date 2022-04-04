@@ -7,8 +7,6 @@ import (
 	"github.com/gliderlabs/ssh"
 )
 
-var clients []yrcClient
-
 func Initialize() {
 	openDatabase()
 	listenSsh()

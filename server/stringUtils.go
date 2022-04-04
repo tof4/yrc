@@ -1,19 +1,28 @@
 package server
 
 import (
+	"fmt"
 	"regexp"
 	"strings"
 )
 
-func getStringBetweenQuotes(source string) string {
-	r, _ := regexp.Compile(`"((?:\\"|[^"])*)"`)
-	match := r.FindStringSubmatch(source)
+func getStringsBetweenQuotes(source string) []string {
+	r := regexp.MustCompile(`(\w+)||((?:\\"|[^"])*)`)
+	match := r.FindAllString(source, -1)
 	if len(match) < 2 {
-		return ""
+		return nil
 	}
 
-	result := strings.ReplaceAll(match[1], `\"`, "")
-	return strings.TrimSpace(result)
+	var results []string
+	for _, s := range match {
+		preparedString := strings.TrimSpace(strings.ReplaceAll(s, `\"`, ""))
+		if len(preparedString) > 0 {
+			results = append(results, preparedString)
+		}
+	}
+
+	fmt.Println(results)
+	return results
 }
 
 func validateMessage(source string) bool {

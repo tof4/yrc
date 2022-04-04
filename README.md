@@ -37,10 +37,10 @@ API is designed to be both human and machine readable. It"s similar to SQL.
 
 ## Commands
 
-| Command | Schema             | Description       | Example              |
-| ------- | ------------------ | ----------------- | -------------------- |
-| send    | `send "[content]"` | Send message.     | `sent "hello world"` |
-| exit    | `exit`             | Close connection. | `exit`               |
+| Command | Schema                         | Description       | Example              |
+| ------- | ------------------------------ | ----------------- | -------------------- |
+| send    | `send "[channel]" "[content]"` | Send message.     | `send "hello world"` |
+| exit    | `exit`                         | Close connection. | `exit`               |
 
 ## Events
 
@@ -58,5 +58,5 @@ Default server implemetation uses plain file system as database.
     * publickey
 * chl
   * name
-    * messages
-    * subscribers
+    * chat
+    * members

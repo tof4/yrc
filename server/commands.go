@@ -1,13 +1,11 @@
 package server
 
-import (
-	"fmt"
-	"strings"
-	"time"
-)
-
 func handleCommand(command string, client yrcClient) {
-	argumets := strings.Split(strings.TrimSpace(command), " ")
+	argumets := getStringsBetweenQuotes(command)
+
+	if len(argumets) < 1 {
+		return
+	}
 
 	switch argumets[0] {
 	case "send":
@@ -19,10 +17,12 @@ func handleCommand(command string, client yrcClient) {
 }
 
 func send(client yrcClient, argumets []string) {
-	message := getStringBetweenQuotes(strings.Join(argumets, " "))
-	if validateMessage(message) {
-		timestamp := time.Now().Format("2006-01-02|15:04:05")
-		broadcast(client, fmt.Sprintf(`message from %s at %s "%s"`, client.username, timestamp, message))
+	if len(argumets) < 3 {
+		return
+	}
+
+	if validateMessage(argumets[2]) {
+		sendToChannel(client, argumets[1], argumets[2])
 	}
 }
 

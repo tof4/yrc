@@ -20,7 +20,7 @@ func handleSshConnect(session ssh.Session) {
 
 	client := yrcClient{
 		networkInterface: newSshClient,
-		username:         "default"}
+		username:         session.User()}
 
 	clients = append(clients, client)
 	handleConnect(client)

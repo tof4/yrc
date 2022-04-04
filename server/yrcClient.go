@@ -18,13 +18,11 @@ type yrcClient struct {
 }
 
 func handleConnect(client yrcClient) {
-	log.Println("Connected:", client.networkInterface.getAddress())
-	broadcast(client, fmt.Sprintf(`connected %s`, client.username))
+	log.Println(fmt.Sprintf("Connected %s from %s", client.username, client.networkInterface.getAddress()))
 }
 
 func handleDisconnect(client yrcClient) {
-	log.Println("Disconnected:", client.networkInterface.getAddress())
-	broadcast(client, fmt.Sprintf(`disconnected %s`, client.username))
+	log.Println(fmt.Sprintf("Connected %s", client.username))
 
 	for i, c := range clients {
 		if c.username == client.username {

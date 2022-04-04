@@ -1,8 +1,10 @@
 package server
 
-import "log"
+import (
+	"log"
+)
 
-func catch(err error) {
+func catchFatal(err error) {
 	if err != nil {
 		log.Fatal(err)
 	}
