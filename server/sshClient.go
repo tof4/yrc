@@ -39,7 +39,7 @@ func handleSshConnect(session ssh.Session) {
 			return
 		}
 
-		handleCommand(line, client)
+		handleInput(line, client)
 	}
 
 }

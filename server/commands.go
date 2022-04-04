@@ -1,12 +1,6 @@
 package server
 
-func handleCommand(command string, client yrcClient) {
-	argumets := getStringsBetweenQuotes(command)
-
-	if len(argumets) < 1 {
-		return
-	}
-
+func callCommand(client yrcClient, argumets []string) {
 	switch argumets[0] {
 	case "send":
 		send(client, argumets)
@@ -21,9 +15,7 @@ func send(client yrcClient, argumets []string) {
 		return
 	}
 
-	if validateMessage(argumets[2]) {
-		sendToChannel(client, argumets[1], argumets[2])
-	}
+	sendToChannel(client, argumets[1], argumets[2])
 }
 
 func exit(client yrcClient) {
