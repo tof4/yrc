@@ -7,7 +7,7 @@ import (
 )
 
 func authByPassword(username string, password string) bool {
-	passwordHash, err := getUserPasswordHash(username)
+	user, err := getUser(username)
 
 	if err != nil {
 		log.Println(err)
@@ -16,5 +16,5 @@ func authByPassword(username string, password string) bool {
 
 	hash := sha256.Sum256([]byte(password))
 	hashString := fmt.Sprintf("%x", hash[:])
-	return passwordHash == hashString
+	return user.passwordHash == hashString
 }

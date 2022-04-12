@@ -25,10 +25,10 @@ func broadcast(sender yrcClient, data string) {
 }
 
 func sendToChannel(sender yrcClient, channelName string, content string) error {
-	members, err := getChannelMembers(channelName)
+	group, err := getGroup(channelName)
 	saveMessage(channelName, sender.username, content)
-	for _, m := range members {
-		receiver, err := getConnectedClientByUsername(m)
+	for _, m := range group.members {
+		receiver, err := getConnectedClientByUsername(m.name)
 		if err == nil && sender.username != receiver.username {
 			receiver.networkInterface.sendData(content)
 		}

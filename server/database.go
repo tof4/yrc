@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
+	"log"
 	"os"
 	"path/filepath"
 	"strings"
@@ -15,16 +16,23 @@ type databasePaths struct {
 	etc      string
 	channels string
 	passwd   string
+	group    string
 }
 
-type userModel struct {
-	username     string
+type user struct {
+	name         string
 	passwordHash string
 }
 
+type group struct {
+	name    string
+	members []user
+}
+
 var (
-	paths databasePaths
-	users []userModel
+	paths  databasePaths
+	users  []user
+	groups []group
 )
 
 func openDatabase(rootPath string) {
@@ -32,27 +40,33 @@ func openDatabase(rootPath string) {
 	paths.etc = filepath.Join(paths.root, "etc")
 	paths.channels = filepath.Join(paths.root, "chl")
 	paths.passwd = filepath.Join(paths.etc, "passwd")
+	paths.group = filepath.Join(paths.etc, "group")
 
 	err := os.MkdirAll(paths.etc, os.ModePerm)
 	err = os.MkdirAll(paths.channels, os.ModePerm)
 	_, err = os.OpenFile(paths.passwd, os.O_RDWR|os.O_CREATE, 0600)
+	_, err = os.OpenFile(paths.group, os.O_RDWR|os.O_CREATE, 0600)
 
 	catchFatal(err)
 
 	users = loadUsers()
+	groups = loadGroups(users)
+
+	log.Printf("Loaded %d user(s) and %d group(s)\n", len(users), len(groups))
 }
 
-func loadUsers() (newUsersList []userModel) {
+func loadUsers() (newUsersList []user) {
 	passwdFile, err := os.Open(paths.passwd)
 	defer passwdFile.Close()
 	catchFatal(err)
+
 	scanner := bufio.NewScanner(passwdFile)
 	scanner.Split(bufio.ScanLines)
 
 	for scanner.Scan() {
 		userProperties := strings.Split(scanner.Text(), ":")
-		user := userModel{
-			username:     userProperties[0],
+		user := user{
+			name:         userProperties[0],
 			passwordHash: userProperties[1],
 		}
 		newUsersList = append(newUsersList, user)
@@ -61,28 +75,54 @@ func loadUsers() (newUsersList []userModel) {
 	return
 }
 
-func getUserPasswordHash(username string) (string, error) {
+func loadGroups(users []user) (newGroupsList []group) {
+	groupsFile, err := os.Open(paths.group)
+	defer groupsFile.Close()
+	catchFatal(err)
+
+	scanner := bufio.NewScanner(groupsFile)
+	scanner.Split(bufio.ScanLines)
+
+	for scanner.Scan() {
+		groupProperties := strings.Split(scanner.Text(), ":")
+		groupMembersStrings := strings.Split(groupProperties[1], ",")
+
+		group := group{
+			name:    groupProperties[0],
+			members: []user{},
+		}
+
+		for _, x := range groupMembersStrings {
+			user, err := getUser(x)
+			if err == nil {
+				group.members = append(group.members, user)
+			}
+		}
+
+		newGroupsList = append(newGroupsList, group)
+	}
+
+	return
+}
+
+func getUser(name string) (user, error) {
 	for _, x := range users {
-		if x.username == username {
-			return x.passwordHash, nil
+		if x.name == name {
+			return x, nil
 		}
 	}
 
-	return "", errors.New("User not found")
+	return user{}, errors.New("User not found")
 }
 
-func getChannelMembers(channelName string) ([]string, error) {
-	membersFile, err := os.ReadFile(filepath.Join(paths.channels, channelName, "members"))
-
-	if err != nil && errors.Is(err, os.ErrNotExist) {
-		return nil, errors.New("Channel not found")
-	}
-	if err != nil {
-		catchFatal(err)
-		return nil, nil
+func getGroup(name string) (group, error) {
+	for _, x := range groups {
+		if x.name == name {
+			return x, nil
+		}
 	}
 
-	return strings.Split(string(membersFile), "\n"), nil
+	return group{}, errors.New("Group not found")
 }
 
 func saveMessage(channelName string, senderName string, content string) {
