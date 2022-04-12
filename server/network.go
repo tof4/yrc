@@ -3,6 +3,7 @@ package server
 import (
 	"errors"
 	"fmt"
+	"time"
 )
 
 var clients []yrcClient
@@ -24,16 +25,24 @@ func broadcast(sender yrcClient, data string) {
 	}
 }
 
-func sendToChannel(sender yrcClient, channelName string, content string) error {
-	group, err := getGroup(channelName)
-	saveMessage(channelName, sender.username, content)
+func sendToChannel(sender yrcClient, groupName string, content string) error {
+	group, err := getGroup(groupName)
+
+	if err != nil {
+		replyWithError(sender, err)
+		return err
+	}
+
+	formattedMessage := formatMessage(sender.username, groupName, content)
+
 	for _, m := range group.members {
 		receiver, err := getConnectedClientByUsername(m.name)
 		if err == nil && sender.username != receiver.username {
-			receiver.networkInterface.sendData(content)
+			receiver.networkInterface.sendData(formattedMessage)
 		}
 	}
-	catchFatal(err)
+
+	saveMessage(groupName, formattedMessage)
 	return nil
 }
 
@@ -44,4 +53,8 @@ func getConnectedClientByUsername(username string) (yrcClient, error) {
 		}
 	}
 	return yrcClient{}, errors.New("User not found")
+}
+
+func formatMessage(groupName string, senderName string, content string) string {
+	return fmt.Sprintf("%s:%d:%s:%s\n", groupName, time.Now().Unix(), senderName, content)
 }

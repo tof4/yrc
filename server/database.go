@@ -3,12 +3,10 @@ package server
 import (
 	"bufio"
 	"errors"
-	"fmt"
 	"log"
 	"os"
 	"path/filepath"
 	"strings"
-	"time"
 )
 
 type databasePaths struct {
@@ -125,11 +123,10 @@ func getGroup(name string) (group, error) {
 	return group{}, errors.New("Group not found")
 }
 
-func saveMessage(channelName string, senderName string, content string) {
+func saveMessage(channelName string, message string) {
 	path := filepath.Join(paths.chat, channelName)
-	timestamp := time.Now().Format("2006-01-02 15:04:05")
 	file, err := os.OpenFile(path, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
 	defer file.Close()
-	_, err = file.WriteString(fmt.Sprintf("%s %s: %s\n", timestamp, senderName, content))
+	_, err = file.WriteString(message)
 	catchFatal(err)
 }
