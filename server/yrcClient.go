@@ -22,7 +22,7 @@ func handleConnect(client yrcClient) {
 }
 
 func handleDisconnect(client yrcClient) {
-	log.Println(fmt.Sprintf("Connected %s", client.username))
+	log.Println(fmt.Sprintf("Disconnected %s", client.username))
 
 	for i, c := range clients {
 		if c.username == client.username {

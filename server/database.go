@@ -1,6 +1,7 @@
 package server
 
 import (
+	"bufio"
 	"errors"
 	"fmt"
 	"os"
@@ -11,32 +12,59 @@ import (
 
 type databasePaths struct {
 	root     string
-	users    string
+	etc      string
 	channels string
+	passwd   string
 }
 
-var paths databasePaths
+type userModel struct {
+	username     string
+	passwordHash string
+}
+
+var (
+	paths databasePaths
+	users []userModel
+)
 
 func openDatabase(rootPath string) {
 	paths.root = rootPath
-	paths.users = filepath.Join(paths.root, "usr")
+	paths.etc = filepath.Join(paths.root, "etc")
 	paths.channels = filepath.Join(paths.root, "chl")
-	err := os.MkdirAll(paths.users, os.ModePerm)
+	paths.passwd = filepath.Join(paths.etc, "passwd")
+
+	err := os.MkdirAll(paths.etc, os.ModePerm)
 	err = os.MkdirAll(paths.channels, os.ModePerm)
+	_, err = os.OpenFile(paths.passwd, os.O_RDWR|os.O_CREATE, 0600)
+
 	catchFatal(err)
+
+	users = loadUsers()
+}
+
+func loadUsers() (newUsersList []userModel) {
+	passwdFile, err := os.Open(paths.passwd)
+	defer passwdFile.Close()
+	catchFatal(err)
+	scanner := bufio.NewScanner(passwdFile)
+	scanner.Split(bufio.ScanLines)
+
+	for scanner.Scan() {
+		userProperties := strings.Split(scanner.Text(), ":")
+		user := userModel{
+			username:     userProperties[0],
+			passwordHash: userProperties[1],
+		}
+		newUsersList = append(newUsersList, user)
+	}
+
+	return
 }
 
 func getUserPasswordHash(username string) (string, error) {
-	usersDir, err := os.Open(paths.users)
-	catchFatal(err)
-	defer usersDir.Close()
-
-	list, _ := usersDir.Readdirnames(0)
-	for _, name := range list {
-		if name == username {
-			passwordHash, err := os.ReadFile(filepath.Join(paths.users, name, "passwordhash"))
-			catchFatal(err)
-			return strings.TrimSpace(string(passwordHash)), nil
+	for _, x := range users {
+		if x.username == username {
+			return x.passwordHash, nil
 		}
 	}
 
