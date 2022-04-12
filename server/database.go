@@ -12,11 +12,11 @@ import (
 )
 
 type databasePaths struct {
-	root     string
-	etc      string
-	channels string
-	passwd   string
-	group    string
+	root   string
+	etc    string
+	chat   string
+	passwd string
+	group  string
 }
 
 type user struct {
@@ -38,12 +38,12 @@ var (
 func openDatabase(rootPath string) {
 	paths.root = rootPath
 	paths.etc = filepath.Join(paths.root, "etc")
-	paths.channels = filepath.Join(paths.root, "chl")
+	paths.chat = filepath.Join(paths.root, "chat")
 	paths.passwd = filepath.Join(paths.etc, "passwd")
 	paths.group = filepath.Join(paths.etc, "group")
 
 	err := os.MkdirAll(paths.etc, os.ModePerm)
-	err = os.MkdirAll(paths.channels, os.ModePerm)
+	err = os.MkdirAll(paths.chat, os.ModePerm)
 	_, err = os.OpenFile(paths.passwd, os.O_RDWR|os.O_CREATE, 0600)
 	_, err = os.OpenFile(paths.group, os.O_RDWR|os.O_CREATE, 0600)
 
@@ -126,10 +126,10 @@ func getGroup(name string) (group, error) {
 }
 
 func saveMessage(channelName string, senderName string, content string) {
-	path := filepath.Join(paths.channels, channelName, "chat")
+	path := filepath.Join(paths.chat, channelName)
 	timestamp := time.Now().Format("2006-01-02 15:04:05")
 	file, err := os.OpenFile(path, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
 	defer file.Close()
-	_, err = file.WriteString(fmt.Sprintf("%s %s %s\n", timestamp, senderName, content))
+	_, err = file.WriteString(fmt.Sprintf("%s %s: %s\n", timestamp, senderName, content))
 	catchFatal(err)
 }
