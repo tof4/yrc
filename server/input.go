@@ -26,16 +26,9 @@ func handleInput(input string, client yrcClient) {
 }
 
 func parseCommand(input string) ([]string, error) {
-	r := regexp.MustCompile(`(\w+)||((?:\\"|[^"])*)`)
-	match := r.FindAllString(input, -1)
 
-	var results []string
-	for _, s := range match {
-		preparedString := strings.TrimSpace(strings.ReplaceAll(s, `\"`, ""))
-		if len(preparedString) > 0 {
-			results = append(results, preparedString)
-		}
-	}
+	r := regexp.MustCompile("'.+'|\".+\"|\\S+")
+	results := r.FindAllString(input, -1)
 
 	if len(results) < 1 {
 		return results, errors.New("Too few arguments")
