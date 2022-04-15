@@ -25,24 +25,24 @@ func broadcast(sender yrcClient, data string) {
 	}
 }
 
-func sendToChannel(sender yrcClient, channel string, content string) error {
-	group, err := getChannel(channel)
+func sendToChannel(sender yrcClient, channelName string, content string) error {
+	channel, err := getChannel(channelName)
 
 	if err != nil {
 		replyWithError(sender, err)
 		return err
 	}
 
-	formattedMessage := fmt.Sprintf("message %s %s %d %s\n", group.name, sender.username, time.Now().Unix(), content)
+	formattedMessage := fmt.Sprintf("message %s %s %d %s\n", channel.name, sender.username, time.Now().Unix(), content)
 
-	for _, m := range group.members {
+	for _, m := range channel.members {
 		receiver, err := getClientByUsername(m.name)
 		if err == nil && sender.username != receiver.username {
 			receiver.networkInterface.sendData(formattedMessage)
 		}
 	}
 
-	saveMessage(channel, formattedMessage)
+	saveMessage(channel.name, formattedMessage)
 	return nil
 }
 

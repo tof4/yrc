@@ -10,11 +10,11 @@ import (
 )
 
 type databasePaths struct {
-	root   string
-	etc    string
-	chat   string
-	passwd string
-	group  string
+	root     string
+	etc      string
+	chat     string
+	users    string
+	channels string
 }
 
 type user struct {
@@ -22,43 +22,43 @@ type user struct {
 	passwordHash string
 }
 
-type group struct {
+type channel struct {
 	name    string
 	members []user
 }
 
 var (
-	paths  databasePaths
-	users  []user
-	groups []group
+	paths    databasePaths
+	users    []user
+	channels []channel
 )
 
 func openDatabase(rootPath string) {
 	paths.root = rootPath
 	paths.etc = filepath.Join(paths.root, "etc")
 	paths.chat = filepath.Join(paths.root, "chat")
-	paths.passwd = filepath.Join(paths.etc, "passwd")
-	paths.group = filepath.Join(paths.etc, "group")
+	paths.users = filepath.Join(paths.etc, "users")
+	paths.channels = filepath.Join(paths.etc, "channels")
 
 	err := os.MkdirAll(paths.etc, os.ModePerm)
 	err = os.MkdirAll(paths.chat, os.ModePerm)
-	_, err = os.OpenFile(paths.passwd, os.O_RDWR|os.O_CREATE, 0600)
-	_, err = os.OpenFile(paths.group, os.O_RDWR|os.O_CREATE, 0600)
+	_, err = os.OpenFile(paths.users, os.O_RDWR|os.O_CREATE, 0600)
+	_, err = os.OpenFile(paths.channels, os.O_RDWR|os.O_CREATE, 0600)
 
 	catchFatal(err)
 
 	users = loadUsers()
-	groups = loadGroups(users)
+	channels = loadChannels(users)
 
-	log.Printf("Loaded %d user(s) and %d group(s)\n", len(users), len(groups))
+	log.Printf("Loaded %d user(s) and %d channel(s)\n", len(users), len(channels))
 }
 
 func loadUsers() (newUsersList []user) {
-	passwdFile, err := os.Open(paths.passwd)
-	defer passwdFile.Close()
+	usersFile, err := os.Open(paths.users)
+	defer usersFile.Close()
 	catchFatal(err)
 
-	scanner := bufio.NewScanner(passwdFile)
+	scanner := bufio.NewScanner(usersFile)
 	scanner.Split(bufio.ScanLines)
 
 	for scanner.Scan() {
@@ -73,31 +73,31 @@ func loadUsers() (newUsersList []user) {
 	return
 }
 
-func loadGroups(users []user) (newGroupsList []group) {
-	groupsFile, err := os.Open(paths.group)
-	defer groupsFile.Close()
+func loadChannels(users []user) (channelsList []channel) {
+	channelsFile, err := os.Open(paths.channels)
+	defer channelsFile.Close()
 	catchFatal(err)
 
-	scanner := bufio.NewScanner(groupsFile)
+	scanner := bufio.NewScanner(channelsFile)
 	scanner.Split(bufio.ScanLines)
 
 	for scanner.Scan() {
-		groupProperties := strings.Split(scanner.Text(), ":")
-		groupMembersStrings := strings.Split(groupProperties[1], ",")
+		channelProperties := strings.Split(scanner.Text(), ":")
+		channelMembersStrings := strings.Split(channelProperties[1], ",")
 
-		group := group{
-			name:    groupProperties[0],
+		channel := channel{
+			name:    channelProperties[0],
 			members: []user{},
 		}
 
-		for _, x := range groupMembersStrings {
+		for _, x := range channelMembersStrings {
 			user, err := getUser(x)
 			if err == nil {
-				group.members = append(group.members, user)
+				channel.members = append(channel.members, user)
 			}
 		}
 
-		newGroupsList = append(newGroupsList, group)
+		channelsList = append(channelsList, channel)
 	}
 
 	return
@@ -113,14 +113,14 @@ func getUser(name string) (user, error) {
 	return user{}, errors.New("User not found")
 }
 
-func getChannel(name string) (group, error) {
-	for _, x := range groups {
+func getChannel(name string) (channel, error) {
+	for _, x := range channels {
 		if x.name == name {
 			return x, nil
 		}
 	}
 
-	return group{}, errors.New("Group not found")
+	return channel{}, errors.New("Channel not found")
 }
 
 func saveMessage(channelName string, message string) {
