@@ -62,7 +62,7 @@ func loadUsers() (newUsersList []user) {
 	scanner.Split(bufio.ScanLines)
 
 	for scanner.Scan() {
-		userProperties := strings.Split(scanner.Text(), ":")
+		userProperties := strings.Split(scanner.Text(), " ")
 		user := user{
 			name:         userProperties[0],
 			passwordHash: userProperties[1],
@@ -82,7 +82,7 @@ func loadChannels(users []user) (channelsList []channel) {
 	scanner.Split(bufio.ScanLines)
 
 	for scanner.Scan() {
-		channelProperties := strings.Split(scanner.Text(), ":")
+		channelProperties := strings.Split(scanner.Text(), " ")
 		channelMembersStrings := strings.Split(channelProperties[1], ",")
 
 		channel := channel{
