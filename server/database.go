@@ -113,7 +113,7 @@ func getUser(name string) (user, error) {
 	return user{}, errors.New("User not found")
 }
 
-func getGroup(name string) (group, error) {
+func getChannel(name string) (group, error) {
 	for _, x := range groups {
 		if x.name == name {
 			return x, nil

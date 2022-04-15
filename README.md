@@ -14,8 +14,6 @@ Even more experimental than Lanchat!
 
 ## API
 
-API is designed to be both human and machine readable. It"s similar to SQL.
-
 * Single query consists of arguments separated by spaces.
 * First argument determines how rest of query will be treated.
 * First argument have to be in lower case.
@@ -32,21 +30,21 @@ API is designed to be both human and machine readable. It"s similar to SQL.
 
 ## Definitions
 
-* `id` - User's nickname. Have to be unique.
-* `timestamp` - Date and time in `YYYY-MM-DD|HH:mm:ss`
+* `id` - User's username. Have to be unique.
+* `timestamp` - UTC Unix time.
 
 ## Commands
 
-| Command | Schema                         | Description       | Example              |
-| ------- | ------------------------------ | ----------------- | -------------------- |
-| send    | `send "[channel]" "[content]"` | Send message.     | `send "hello world"` |
-| exit    | `exit`                         | Close connection. | `exit`               |
+| Command | Schema                       | Description       | Example                   |
+| ------- | ---------------------------- | ----------------- | ------------------------- |
+| send    | `send [channel] "[content]"` | Send message.     | `send main "hello world"` |
+| exit    | `exit`                       | Close connection. | `exit`                    |
 
 ## Events
 
-| Event   | Schema                                         | Description           | Example                                                     |
-| ------- | ---------------------------------------------- | --------------------- | ----------------------------------------------------------- |
-| message | `message from [id] at [timestamp] "[content]"` | New message received. | `message from "test" at 1970-01-01\|00:00:00 "hello world"` |
+| Event   | Schema                                           | Description           | Example                                      |
+| ------- | ------------------------------------------------ | --------------------- | -------------------------------------------- |
+| message | `message [channel] [id] [timestamp] "[content]"` | New message received. | `message main test 1650036004 "hello world"` |
 
 ## Database
 

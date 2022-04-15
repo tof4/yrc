@@ -25,36 +25,32 @@ func broadcast(sender yrcClient, data string) {
 	}
 }
 
-func sendToChannel(sender yrcClient, groupName string, content string) error {
-	group, err := getGroup(groupName)
+func sendToChannel(sender yrcClient, channel string, content string) error {
+	group, err := getChannel(channel)
 
 	if err != nil {
 		replyWithError(sender, err)
 		return err
 	}
 
-	formattedMessage := formatMessage(sender.username, groupName, content)
+	formattedMessage := fmt.Sprintf("message %s %s %d %s\n", group.name, sender.username, time.Now().Unix(), content)
 
 	for _, m := range group.members {
-		receiver, err := getConnectedClientByUsername(m.name)
+		receiver, err := getClientByUsername(m.name)
 		if err == nil && sender.username != receiver.username {
 			receiver.networkInterface.sendData(formattedMessage)
 		}
 	}
 
-	saveMessage(groupName, formattedMessage)
+	saveMessage(channel, formattedMessage)
 	return nil
 }
 
-func getConnectedClientByUsername(username string) (yrcClient, error) {
+func getClientByUsername(username string) (yrcClient, error) {
 	for _, c := range clients {
 		if c.username == username {
 			return c, nil
 		}
 	}
 	return yrcClient{}, errors.New("User not found")
-}
-
-func formatMessage(groupName string, senderName string, content string) string {
-	return fmt.Sprintf("%s:%d:%s:%s\n", groupName, time.Now().Unix(), senderName, content)
 }
