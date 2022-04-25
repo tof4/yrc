@@ -22,11 +22,11 @@ func getClient(user user, clientId uuid.UUID) (client, error) {
 	return client{}, errors.New("Client not found")
 }
 
-func addClient(user user, client client) {
+func addClient(user *user, client client) {
 	user.clients = append(user.clients, client)
 }
 
-func removeClient(user user, client client) {
+func removeClient(user *user, client client) {
 	for i, x := range user.clients {
 		if x.id == client.id {
 			user.clients[i] = user.clients[len(user.clients)-1]

@@ -10,6 +10,7 @@ import (
 type client struct {
 	session ssh.Session
 	id      uuid.UUID
+	user    *user
 }
 
 func (client client) sendData(data string) {

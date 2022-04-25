@@ -19,7 +19,7 @@ type databasePaths struct {
 
 type channel struct {
 	name    string
-	members []user
+	members []*user
 }
 
 var (
@@ -82,7 +82,7 @@ func loadChannels(users []user) (channelsList []channel) {
 
 		channel := channel{
 			name:    channelProperties[0],
-			members: []user{},
+			members: []*user{},
 		}
 
 		for _, x := range channelMembersStrings {
@@ -98,14 +98,14 @@ func loadChannels(users []user) (channelsList []channel) {
 	return
 }
 
-func getUser(name string) (user, error) {
-	for _, x := range users {
+func getUser(name string) (*user, error) {
+	for i, x := range users {
 		if x.name == name {
-			return x, nil
+			return &users[i], nil
 		}
 	}
 
-	return user{}, errors.New("User not found")
+	return &user{}, errors.New("User not found")
 }
 
 func getChannel(name string) (channel, error) {

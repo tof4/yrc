@@ -35,7 +35,11 @@ func handleConnect(session ssh.Session) {
 		return
 	}
 
-	client := client{session: session, id: uuid.New()}
+	client := client{
+		session: session,
+		id:      uuid.New(),
+		user:    user}
+
 	addClient(user, client)
 	log.Println(fmt.Sprintf("Connected %s(%s) from %s", user.name, client.id, client.getAddress()))
 
@@ -56,21 +60,4 @@ func handleConnect(session ssh.Session) {
 
 		handleInput(line, client)
 	}
-}
-
-// TODO: MESS!
-func getClientUser(client client) (user, error) {
-	for _, x := range users {
-		for _, y := range x.clients {
-			fmt.Println(client.id)
-			fmt.Println(x.name)
-			fmt.Println(y.id)
-			fmt.Println()
-			if y.id == client.id {
-				return x, nil
-			}
-		}
-	}
-
-	return user{}, errors.New("User not found")
 }
