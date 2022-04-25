@@ -15,9 +15,11 @@ func sendToAll(sender client, data string) {
 	}
 }
 
-func sendToUser(user *user, data string) {
+func sendToUser(user *user, client client, data string) {
 	for _, x := range user.clients {
-		x.sendData(data)
+		if x.id != client.id {
+			x.sendData(data)
+		}
 	}
 }
 
@@ -32,7 +34,7 @@ func sendToChannel(sender client, channelName string, content string) error {
 	formattedMessage := fmt.Sprintf("message %s %s %d %s\n", channel.name, sender.user.name, time.Now().Unix(), content)
 
 	for _, m := range channel.members {
-		sendToUser(m, formattedMessage)
+		sendToUser(m, sender, formattedMessage)
 	}
 
 	saveMessage(channel.name, formattedMessage)
