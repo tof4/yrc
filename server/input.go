@@ -7,22 +7,24 @@ import (
 	"strings"
 )
 
-func handleInput(input string, client yrcClient) {
+func handleInput(input string, senderClient client) {
+
+	sender, err := getClientUser(senderClient)
 	validatedInput, err := validateUserInput(input)
 
 	if err != nil {
-		log.Printf("User %s sent inavlid data. Error: %s", client.username, err)
+		log.Printf("User %s sent inavlid data. Error: %s", sender.name, err)
 		return
 	}
 
 	argumets, err := parseCommand(validatedInput)
 
 	if len(argumets) < 1 {
-		log.Printf("User %s sent inavlid data", client.username)
+		log.Printf("User %s sent inavlid data", sender.name)
 		return
 	}
 
-	callCommand(client, argumets)
+	callCommand(senderClient, argumets)
 }
 
 func parseCommand(input string) ([]string, error) {

@@ -17,11 +17,6 @@ type databasePaths struct {
 	channels string
 }
 
-type user struct {
-	name         string
-	passwordHash string
-}
-
 type channel struct {
 	name    string
 	members []user

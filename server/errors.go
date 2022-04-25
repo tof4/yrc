@@ -14,7 +14,7 @@ func catchFatal(err error) {
 
 }
 
-func replyWithError(client yrcClient, err error) {
+func replyWithError(client client, err error) {
 	message := fmt.Sprintf("Error: %s \n", err)
-	client.networkInterface.sendData(message)
+	client.sendData(message)
 }

@@ -1,6 +1,6 @@
 package server
 
-func callCommand(client yrcClient, argumets []string) {
+func callCommand(client client, argumets []string) {
 	switch argumets[0] {
 	case "send":
 		send(client, argumets)
@@ -10,7 +10,7 @@ func callCommand(client yrcClient, argumets []string) {
 	}
 }
 
-func send(client yrcClient, argumets []string) {
+func send(client client, argumets []string) {
 	if len(argumets) < 3 {
 		return
 	}
@@ -18,6 +18,6 @@ func send(client yrcClient, argumets []string) {
 	sendToChannel(client, argumets[1], argumets[2])
 }
 
-func exit(client yrcClient) {
-	client.networkInterface.disconnect()
+func exit(client client) {
+	client.disconnect()
 }
