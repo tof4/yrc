@@ -19,14 +19,18 @@ func Initialize(port int, rootPath string) {
 }
 
 func listenSsh(port int) {
+
 	ssh.Handle(func(s ssh.Session) {
 		handleConnect(s)
 	})
-	ssh.ListenAndServe(fmt.Sprintf(":%d", port), nil,
-		ssh.PasswordAuth(func(ctx ssh.Context, password string) bool {
-			return authByPassword(ctx.User(), password)
-		}),
-	)
+
+	log.Fatal(
+		ssh.ListenAndServe(fmt.Sprintf(":%d", port), nil,
+			ssh.PasswordAuth(func(ctx ssh.Context, password string) bool {
+				return authByPassword(ctx.User(), password)
+			}),
+			ssh.HostKeyFile(paths.key),
+		))
 }
 
 func handleConnect(session ssh.Session) {

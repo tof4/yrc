@@ -15,6 +15,7 @@ type databasePaths struct {
 	chat     string
 	users    string
 	channels string
+	key      string
 }
 
 type channel struct {
@@ -34,6 +35,7 @@ func openDatabase(rootPath string) {
 	paths.chat = filepath.Join(paths.root, "chat")
 	paths.users = filepath.Join(paths.etc, "users")
 	paths.channels = filepath.Join(paths.etc, "channels")
+	paths.key = filepath.Join(paths.etc, "key.pem")
 
 	err := os.MkdirAll(paths.etc, os.ModePerm)
 	err = os.MkdirAll(paths.chat, os.ModePerm)
