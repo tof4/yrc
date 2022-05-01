@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"unicode/utf8"
 )
 
 type databasePaths struct {
@@ -126,4 +127,49 @@ func saveMessage(channelName string, message string) {
 	defer file.Close()
 	_, err = file.WriteString(message)
 	catchFatal(err)
+}
+
+func getChannelMessages(channel string, count int) []string {
+	path := filepath.Join(paths.chat, channel)
+	file, _ := os.Open(path)
+	defer file.Close()
+
+	buf := make([]byte, 1)
+	lines := make([]string, count)
+	var sb strings.Builder
+	start, _ := file.Seek(0, 2)
+
+	currentLine := count - 1
+
+	for i := start; i >= 0; i-- {
+		if currentLine == -1 {
+			break
+		}
+
+		file.ReadAt(buf, i)
+
+		c, _ := utf8.DecodeRune(buf)
+		if c == utf8.RuneError {
+			buf = make([]byte, len(buf)+1)
+		} else {
+			if c == '\n' {
+				lines[currentLine] = reverse(sb.String())
+				sb.Reset()
+				buf = make([]byte, 1)
+				currentLine--
+			} else {
+				sb.WriteRune(c)
+			}
+		}
+	}
+
+	return lines
+}
+
+func reverse(s string) string {
+	runes := []rune(s)
+	for i, j := 0, len(runes)-1; i < j; i, j = i+1, j-1 {
+		runes[i], runes[j] = runes[j], runes[i]
+	}
+	return string(runes)
 }
