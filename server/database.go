@@ -131,6 +131,10 @@ func saveMessage(channelName string, message string) {
 
 func getChannelMessages(channel string, count int) []string {
 	path := filepath.Join(paths.chat, channel)
+	return BackwardFileRead(path, count)
+}
+
+func BackwardFileRead(path string, count int) []string {
 	file, _ := os.Open(path)
 	defer file.Close()
 
@@ -149,7 +153,7 @@ func getChannelMessages(channel string, count int) []string {
 		file.ReadAt(buf, i)
 
 		c, _ := utf8.DecodeRune(buf)
-		if c == utf8.RuneError {
+		if c == utf8.RuneError && len(buf) <= 5 {
 			buf = make([]byte, len(buf)+1)
 		} else {
 			if c == '\n' {
