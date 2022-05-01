@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/tof4/yrc/pkg/common"
+	"github.com/tof4/yrc/internal/common"
 )
 
 func OpenDatabase(rootPath string) {
