@@ -3,7 +3,6 @@ package database
 import (
 	"bufio"
 	"errors"
-	"log"
 	"os"
 	"path/filepath"
 	"strings"
@@ -28,18 +27,6 @@ func OpenDatabase(rootPath string) {
 
 	Users = loadUsers()
 	channels = loadChannels(Users)
-
-	log.Printf("Loaded %d user(s) and %d channel(s)\n", len(Users), len(channels))
-}
-
-func GetUser(name string) (User, error) {
-	for i, x := range Users {
-		if x.Name == name {
-			return Users[i], nil
-		}
-	}
-
-	return User{}, errors.New("User not found")
 }
 
 func GetChannel(name string) (Channel, error) {

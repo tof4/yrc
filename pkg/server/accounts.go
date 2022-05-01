@@ -1,11 +1,10 @@
 package server
 
 import (
-	"crypto/sha256"
 	"errors"
-	"fmt"
 	"log"
 
+	"github.com/tof4/yrc/internal/common"
 	"github.com/tof4/yrc/pkg/database"
 )
 
@@ -17,9 +16,7 @@ func authByPassword(username string, password string) bool {
 		return false
 	}
 
-	hash := sha256.Sum256([]byte(password))
-	hashString := fmt.Sprintf("%x", hash[:])
-	return user.PasswordHash == hashString
+	return user.PasswordHash == common.Sha256String(password)
 }
 
 func checkPermission(username string, channel database.Channel) error {
