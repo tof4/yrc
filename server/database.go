@@ -129,9 +129,20 @@ func saveMessage(channelName string, message string) {
 	catchFatal(err)
 }
 
-func getChannelMessages(channel string, count int) []string {
-	path := filepath.Join(paths.chat, channel)
-	return BackwardFileRead(path, count)
+func getChannelMessages(channelName string, amount int) ([]string, error) {
+	_, err := getChannel(channelName)
+
+	if err != nil {
+		return []string{}, err
+	}
+
+	if amount < 1 || amount > 1000 {
+		return []string{}, errors.New("Invalid amount")
+	}
+	amount++
+
+	path := filepath.Join(paths.chat, channelName)
+	return BackwardFileRead(path, amount), nil
 }
 
 func BackwardFileRead(path string, count int) []string {

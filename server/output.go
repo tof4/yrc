@@ -15,12 +15,16 @@ func sendToAll(sender client, data string) {
 	}
 }
 
-func sendToUser(user *user, client client, data string) {
+func sendToUser(user *user, ignoredClient client, data string) {
 	for _, x := range user.clients {
-		if x.id != client.id {
+		if x.id != ignoredClient.id {
 			x.sendData(data)
 		}
 	}
+}
+
+func sendToClient(client client, data string) {
+	client.sendData(data)
 }
 
 func sendToChannel(sender client, channelName string, content string) {
