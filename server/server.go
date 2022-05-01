@@ -15,7 +15,6 @@ func Initialize(port int, rootPath string) {
 	openDatabase(rootPath)
 	log.Println(fmt.Sprintf("Starting ssh server on port %d", port))
 	log.Println(fmt.Sprintf("Database set in %s", rootPath))
-	openDatabase(rootPath)
 	listenSsh(port)
 }
 

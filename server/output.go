@@ -23,12 +23,19 @@ func sendToUser(user *user, client client, data string) {
 	}
 }
 
-func sendToChannel(sender client, channelName string, content string) error {
+func sendToChannel(sender client, channelName string, content string) {
 	channel, err := getChannel(channelName)
 
 	if err != nil {
 		replyWithError(sender, err)
-		return err
+		return
+	}
+
+	err = checkPermission(*sender.user, channel)
+
+	if err != nil {
+		replyWithError(sender, err)
+		return
 	}
 
 	formattedMessage := fmt.Sprintf("message %s %s %d %s\n", channel.name, sender.user.name, time.Now().Unix(), content)
@@ -38,5 +45,4 @@ func sendToChannel(sender client, channelName string, content string) error {
 	}
 
 	saveMessage(channel.name, formattedMessage)
-	return nil
 }
