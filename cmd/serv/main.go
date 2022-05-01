@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 
-	"github.com/tof4/yrc/server"
+	"github.com/tof4/yrc/pkg/server"
 )
 
 func main() {

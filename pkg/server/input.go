@@ -12,14 +12,14 @@ func handleInput(input string, sender client) {
 	validatedInput, err := validateUserInput(input)
 
 	if err != nil {
-		log.Printf("User %s sent inavlid data. Error: %s", sender.user.name, err)
+		log.Printf("User %s sent inavlid data. Error: %s", sender.username, err)
 		return
 	}
 
 	argumets, err := parseCommand(validatedInput)
 
 	if len(argumets) < 1 {
-		log.Printf("User %s sent inavlid data", sender.user.name)
+		log.Printf("User %s sent inavlid data", sender.username)
 		return
 	}
 

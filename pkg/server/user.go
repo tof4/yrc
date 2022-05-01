@@ -25,13 +25,3 @@ func getClient(user user, clientId uuid.UUID) (client, error) {
 func addClient(user *user, client client) {
 	user.clients = append(user.clients, client)
 }
-
-func removeClient(user *user, client client) {
-	for i, x := range user.clients {
-		if x.id == client.id {
-			user.clients[i] = user.clients[len(user.clients)-1]
-			user.clients = user.clients[:len(user.clients)-1]
-			return
-		}
-	}
-}

@@ -3,6 +3,8 @@ package server
 import (
 	"strconv"
 	"strings"
+
+	"github.com/tof4/yrc/pkg/database"
 )
 
 func callCommand(client client, argumets []string) {
@@ -43,7 +45,7 @@ func read(client client, argumets []string) {
 		return
 	}
 
-	messages, err := getChannelMessages(channelName, amount)
+	messages, err := database.GetChannelMessages(channelName, amount)
 
 	if err != nil {
 		replyWithError(client, err)

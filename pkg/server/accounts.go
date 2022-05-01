@@ -5,10 +5,12 @@ import (
 	"errors"
 	"fmt"
 	"log"
+
+	"github.com/tof4/yrc/pkg/database"
 )
 
 func authByPassword(username string, password string) bool {
-	user, err := getUser(username)
+	user, err := database.GetUser(username)
 
 	if err != nil {
 		log.Println(err)
@@ -17,12 +19,12 @@ func authByPassword(username string, password string) bool {
 
 	hash := sha256.Sum256([]byte(password))
 	hashString := fmt.Sprintf("%x", hash[:])
-	return user.passwordHash == hashString
+	return user.PasswordHash == hashString
 }
 
-func checkPermission(user user, channel channel) error {
-	for _, x := range channel.members {
-		if x.name == user.name {
+func checkPermission(username string, channel database.Channel) error {
+	for _, x := range channel.Members {
+		if x.Name == username {
 			return nil
 		}
 	}

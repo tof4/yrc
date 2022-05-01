@@ -8,9 +8,9 @@ import (
 )
 
 type client struct {
-	session ssh.Session
-	id      uuid.UUID
-	user    *user
+	session  ssh.Session
+	id       uuid.UUID
+	username string
 }
 
 func (client client) sendData(data string) {
