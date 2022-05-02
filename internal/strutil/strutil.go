@@ -3,10 +3,11 @@ package strutil
 import (
 	"crypto/sha256"
 	"fmt"
+	"strings"
 )
 
-func Sha256(input string) string {
-	hash := sha256.Sum256([]byte(input))
+func Sha256(s string) string {
+	hash := sha256.Sum256([]byte(s))
 	return fmt.Sprintf("%x", hash[:])
 }
 
@@ -16,4 +17,8 @@ func Reverse(s string) string {
 		runes[i], runes[j] = runes[j], runes[i]
 	}
 	return string(runes)
+}
+
+func RemoveSpaces(s string) string {
+	return strings.ReplaceAll(s, " ", "")
 }

@@ -3,7 +3,6 @@ package database
 import (
 	"errors"
 	"fmt"
-	"strings"
 
 	"github.com/tof4/yrc/internal/strutil"
 	"github.com/tof4/yrc/internal/validator"
@@ -20,8 +19,7 @@ func GetUser(name string) (User, error) {
 }
 
 func CreateUser(username string, password string) error {
-	username = strings.TrimSpace(username)
-	username = strings.Split(username, " ")[0]
+	username = strutil.RemoveSpaces(username)
 
 	if validator.ValidateLength(username, 1, 20) {
 		return errors.New("Invalid username length")
@@ -34,7 +32,7 @@ func CreateUser(username string, password string) error {
 	_, err := GetUser(username)
 
 	if err == nil {
-		return errors.New("Username already in use")
+		return errors.New("Username already exists")
 	}
 
 	passwordHash := strutil.Sha256(password)

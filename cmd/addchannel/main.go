@@ -9,16 +9,14 @@ import (
 
 func main() {
 	rootPath := flag.String("d", "ydb", "database root path")
-	username := flag.String("u", "", "username")
-	password := flag.String("p", "", "password")
+	channelName := flag.String("n", "", "channelName")
 	flag.Parse()
 
 	database.OpenDatabase(*rootPath)
-	err := database.CreateUser(*username, *password)
-
+	err := database.CreateChannel(*channelName)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	fmt.Printf("User %s added \n", *username)
+	fmt.Printf("Channel %s added \n", *channelName)
 }
