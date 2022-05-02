@@ -3,7 +3,6 @@ package database
 import (
 	"errors"
 	"fmt"
-	"os"
 	"strings"
 
 	"github.com/tof4/yrc/internal/common"
@@ -23,11 +22,11 @@ func CreateUser(username string, password string) error {
 	username = strings.TrimSpace(username)
 	username = strings.Split(username, " ")[0]
 
-	if len(username) < 1 || len(username) > 20 {
+	if common.ValidateLength(username, 1, 20) {
 		return errors.New("Invalid username length")
 	}
 
-	if len(password) < 1 || len(password) > 100 {
+	if common.ValidateLength(password, 1, 100) {
 		return errors.New("Invalid password length")
 	}
 
@@ -46,10 +45,6 @@ func CreateUser(username string, password string) error {
 			PasswordHash: passwordHash,
 		})
 
-	file, err := os.OpenFile(Paths.Users, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
-	defer file.Close()
-	_, err = file.WriteString(userString)
-	common.CatchFatal(err)
-
+	fileAppend(userString, Paths.Users)
 	return nil
 }

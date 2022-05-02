@@ -2,7 +2,6 @@ package database
 
 import (
 	"bufio"
-	"errors"
 	"os"
 	"path/filepath"
 	"strings"
@@ -27,40 +26,6 @@ func OpenDatabase(rootPath string) {
 
 	Users = loadUsers()
 	channels = loadChannels(Users)
-}
-
-func GetChannel(name string) (Channel, error) {
-	for _, x := range channels {
-		if x.Name == name {
-			return x, nil
-		}
-	}
-
-	return Channel{}, errors.New("Channel not found")
-}
-
-func SaveMessage(channelName string, message string) {
-	path := filepath.Join(Paths.Chat, channelName)
-	file, err := os.OpenFile(path, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
-	defer file.Close()
-	_, err = file.WriteString(message)
-	common.CatchFatal(err)
-}
-
-func GetChannelMessages(channelName string, amount int) ([]string, error) {
-	_, err := GetChannel(channelName)
-
-	if err != nil {
-		return []string{}, err
-	}
-
-	if amount < 1 || amount > 1000 {
-		return []string{}, errors.New("Invalid amount")
-	}
-	amount++
-
-	path := filepath.Join(Paths.Chat, channelName)
-	return BackwardFileRead(path, amount), nil
 }
 
 func loadUsers() (newUsersList []User) {

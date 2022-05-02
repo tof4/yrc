@@ -10,5 +10,4 @@ func CatchFatal(err error) {
 	}
 
 	log.Fatal(err)
-
 }

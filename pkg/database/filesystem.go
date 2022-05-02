@@ -4,7 +4,16 @@ import (
 	"os"
 	"strings"
 	"unicode/utf8"
+
+	"github.com/tof4/yrc/internal/common"
 )
+
+func fileAppend(newLine string, filepath string) {
+	file, err := os.OpenFile(filepath, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
+	defer file.Close()
+	_, err = file.WriteString(newLine)
+	common.CatchFatal(err)
+}
 
 func BackwardFileRead(path string, count int) []string {
 	file, _ := os.Open(path)
@@ -29,7 +38,7 @@ func BackwardFileRead(path string, count int) []string {
 			buf = make([]byte, len(buf)+1)
 		} else {
 			if c == '\n' {
-				lines[currentLine] = reverse(sb.String())
+				lines[currentLine] = common.ReverseString(sb.String())
 				sb.Reset()
 				buf = make([]byte, 1)
 				currentLine--
@@ -40,12 +49,4 @@ func BackwardFileRead(path string, count int) []string {
 	}
 
 	return lines
-}
-
-func reverse(s string) string {
-	runes := []rune(s)
-	for i, j := 0, len(runes)-1; i < j; i, j = i+1, j-1 {
-		runes[i], runes[j] = runes[j], runes[i]
-	}
-	return string(runes)
 }
