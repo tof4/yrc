@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	rootPath := flag.String("d", "ydb", "database root path")
+	rootPath := flag.String("r", "ydb", "database root path")
 	username := flag.String("n", "", "username")
 	password := flag.String("p", "", "password")
 	flag.Parse()

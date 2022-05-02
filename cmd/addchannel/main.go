@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	rootPath := flag.String("d", "ydb", "database root path")
+	rootPath := flag.String("r", "ydb", "database root path")
 	channelName := flag.String("n", "", "channelName")
 	flag.Parse()
 
