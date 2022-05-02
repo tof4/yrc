@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/tof4/yrc/internal/common"
+	"github.com/tof4/yrc/internal/errutil"
 )
 
 func OpenDatabase(rootPath string) {
@@ -22,7 +22,7 @@ func OpenDatabase(rootPath string) {
 	_, err = os.OpenFile(Paths.Users, os.O_RDWR|os.O_CREATE, 0600)
 	_, err = os.OpenFile(Paths.Channels, os.O_RDWR|os.O_CREATE, 0600)
 
-	common.CatchFatal(err)
+	errutil.CatchFatal(err)
 
 	Users = loadUsers()
 	channels = loadChannels(Users)
@@ -31,7 +31,7 @@ func OpenDatabase(rootPath string) {
 func loadUsers() (newUsersList []User) {
 	usersFile, err := os.Open(Paths.Users)
 	defer usersFile.Close()
-	common.CatchFatal(err)
+	errutil.CatchFatal(err)
 
 	scanner := bufio.NewScanner(usersFile)
 	scanner.Split(bufio.ScanLines)
@@ -51,7 +51,7 @@ func loadUsers() (newUsersList []User) {
 func loadChannels(users []User) (channelsList []Channel) {
 	channelsFile, err := os.Open(Paths.Channels)
 	defer channelsFile.Close()
-	common.CatchFatal(err)
+	errutil.CatchFatal(err)
 
 	scanner := bufio.NewScanner(channelsFile)
 	scanner.Split(bufio.ScanLines)

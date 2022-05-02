@@ -5,7 +5,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/tof4/yrc/internal/common"
+	"github.com/tof4/yrc/internal/strutil"
+	"github.com/tof4/yrc/internal/validator"
 )
 
 func GetUser(name string) (User, error) {
@@ -22,11 +23,11 @@ func CreateUser(username string, password string) error {
 	username = strings.TrimSpace(username)
 	username = strings.Split(username, " ")[0]
 
-	if common.ValidateLength(username, 1, 20) {
+	if validator.ValidateLength(username, 1, 20) {
 		return errors.New("Invalid username length")
 	}
 
-	if common.ValidateLength(password, 1, 100) {
+	if validator.ValidateLength(password, 1, 100) {
 		return errors.New("Invalid password length")
 	}
 
@@ -36,7 +37,7 @@ func CreateUser(username string, password string) error {
 		return errors.New("Username already in use")
 	}
 
-	passwordHash := common.Sha256String(password)
+	passwordHash := strutil.Sha256(password)
 	userString := fmt.Sprintf("%s %s\n", username, passwordHash)
 
 	Users = append(Users,

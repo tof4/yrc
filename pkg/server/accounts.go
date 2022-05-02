@@ -4,7 +4,7 @@ import (
 	"errors"
 	"log"
 
-	"github.com/tof4/yrc/internal/common"
+	"github.com/tof4/yrc/internal/strutil"
 	"github.com/tof4/yrc/pkg/database"
 )
 
@@ -16,7 +16,7 @@ func authByPassword(username string, password string) bool {
 		return false
 	}
 
-	return user.PasswordHash == common.Sha256String(password)
+	return user.PasswordHash == strutil.Sha256(password)
 }
 
 func checkPermission(username string, channel database.Channel) error {

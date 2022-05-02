@@ -5,14 +5,15 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"github.com/tof4/yrc/internal/common"
+	"github.com/tof4/yrc/internal/errutil"
+	"github.com/tof4/yrc/internal/strutil"
 )
 
 func fileAppend(newLine string, filepath string) {
 	file, err := os.OpenFile(filepath, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
 	defer file.Close()
 	_, err = file.WriteString(newLine)
-	common.CatchFatal(err)
+	errutil.CatchFatal(err)
 }
 
 func BackwardFileRead(path string, count int) []string {
@@ -38,7 +39,7 @@ func BackwardFileRead(path string, count int) []string {
 			buf = make([]byte, len(buf)+1)
 		} else {
 			if c == '\n' {
-				lines[currentLine] = common.ReverseString(sb.String())
+				lines[currentLine] = strutil.Reverse(sb.String())
 				sb.Reset()
 				buf = make([]byte, 1)
 				currentLine--
