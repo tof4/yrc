@@ -19,7 +19,7 @@ func main() {
 	if *addUsername != "" {
 		addUser(*channelName, *addUsername)
 	} else if *delUsername != "" {
-		fmt.Println("Not implemented")
+		delUser(*channelName, *delUsername)
 	} else {
 		flag.PrintDefaults()
 	}
@@ -28,6 +28,15 @@ func main() {
 func addUser(channelName string, username string) {
 	database.OpenDatabase(*rootPath)
 	err := database.AddToChannel(channelName, username)
+
+	if err != nil {
+		fmt.Println(err)
+	}
+}
+
+func delUser(channelName string, username string) {
+	database.OpenDatabase(*rootPath)
+	err := database.RemoveFromChannel(channelName, username)
 
 	if err != nil {
 		fmt.Println(err)

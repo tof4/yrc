@@ -9,16 +9,16 @@ import (
 	"github.com/tof4/yrc/internal/errutil"
 	"github.com/tof4/yrc/internal/strutil"
 	"github.com/tof4/yrc/internal/validator"
+	"golang.org/x/exp/slices"
 )
 
-func GetChannel(name string) (Channel, error) {
-	for _, x := range channels {
-		if x.Name == name {
-			return x, nil
-		}
+func GetChannel(name string) (*Channel, error) {
+	index := slices.IndexFunc(channels, func(c Channel) bool { return c.Name == name })
+	if index != -1 {
+		return &channels[index], nil
 	}
 
-	return Channel{}, errors.New("Channel not found")
+	return &Channel{}, errors.New("Channel not found")
 }
 
 func CreateChannel(channelName string) error {
@@ -40,38 +40,60 @@ func CreateChannel(channelName string) error {
 
 func AddToChannel(channelName string, username string) error {
 	channel, err := GetChannel(channelName)
-
 	if err != nil {
 		return errors.New("Channel doesn't exists")
 	}
 
 	user, err := GetUser(username)
-
 	if err != nil {
 		return errors.New("User doesn't exists")
 	}
 
-	for _, x := range channel.Members {
-		if x.Name == username {
-			return errors.New("User already in channel")
-		}
+	index := slices.IndexFunc(channel.Members, func(u *User) bool { return u.Name == username })
+	if index != -1 {
+		return errors.New("User already in channel")
 	}
 
-	channel.Members = append(channel.Members, &user)
+	channel.Members = append(channel.Members, user)
+	refreshChannelsFile()
+	return nil
+}
 
-	channelsFile, err := os.OpenFile(Paths.Channels, os.O_WRONLY, 0600)
-	defer channelsFile.Close()
-	errutil.CatchFatal(err)
+func RemoveFromChannel(channelName string, username string) error {
+	channel, err := GetChannel(channelName)
+	if err != nil {
+		return errors.New("Channel doesn't exists")
+	}
 
+	_, err = GetUser(username)
+	if err != nil {
+		return errors.New("User doesn't exists")
+	}
+
+	index := slices.IndexFunc(channel.Members, func(u *User) bool { return u.Name == username })
+	if index == -1 {
+		return errors.New("User is not a channel member")
+	}
+
+	channel.Members = append(channel.Members[:index], channel.Members[index+1:]...)
+	refreshChannelsFile()
+	return nil
+}
+
+func refreshChannelsFile() {
 	var channelsString string
 	for _, x := range channels {
-		var userStrings []string
-		for _, y := range channel.Members {
-			userStrings = append(userStrings, y.Name)
+		var sb strings.Builder
+		for _, y := range x.Members {
+			sb.WriteString(y.Name)
+			sb.WriteString(",")
 		}
-		channelsString += fmt.Sprintf("%s %s,\n", x.Name, strings.Join(userStrings, ","))
+		channelsString += fmt.Sprintf("%s %s\n", x.Name, sb.String())
 	}
 
+	channelsFile, err := os.Create(Paths.Channels)
+	defer channelsFile.Close()
+	errutil.CatchFatal(err)
 	channelsFile.WriteString(channelsString)
-	return nil
+
 }

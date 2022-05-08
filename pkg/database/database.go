@@ -68,7 +68,7 @@ func loadChannels(users []User) (channelsList []Channel) {
 		for _, x := range channelMembersStrings {
 			user, err := GetUser(x)
 			if err == nil {
-				channel.Members = append(channel.Members, &user)
+				channel.Members = append(channel.Members, user)
 			}
 		}
 
