@@ -2,16 +2,6 @@
 
 Even more experimental than Lanchat!
 
-## Planned features
-
-* Channels and private messages
-* Chat history
-* SSH authorization
-
-## Not planned features
-
-* File transfer
-
 ## API
 
 * Single query consists of arguments separated by spaces.
@@ -35,10 +25,11 @@ Even more experimental than Lanchat!
 
 ## Commands
 
-| Command | Schema                       | Description       | Example                   |
-| ------- | ---------------------------- | ----------------- | ------------------------- |
-| send    | `send [channel] "[content]"` | Send message.     | `send main "hello world"` |
-| exit    | `exit`                       | Close connection. | `exit`                    |
+| Command | Schema                       | Description                     | Example                   |
+| ------- | ---------------------------- | ------------------------------- | ------------------------- |
+| send    | `send [channel] "[content]"` | Send message.                   | `send main "hello world"` |
+| read    | `read [channel] [count]`     | Get last messages from channel. | `read main 10`            |
+| exit    | `exit`                       | Close connection.               | `exit`                    |
 
 ## Events
 
@@ -58,3 +49,11 @@ Default server implemetation uses plain file system as database.
   * name
     * chat
     * members
+
+## Tools
+ * serv - Host server
+ * channeladd - Create channel
+ * channeldel - Delete channel
+ * useradd - Create user
+ * userdel - Delete user
+ * usermod - Add or remove user from channel
