@@ -22,5 +22,5 @@ type Channel struct {
 var (
 	Paths    DatabasePaths
 	Users    []User
-	channels []Channel
+	Channels []Channel
 )

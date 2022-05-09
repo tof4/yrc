@@ -25,7 +25,7 @@ func OpenDatabase(rootPath string) {
 	errutil.CatchFatal(err)
 
 	Users = loadUsers()
-	channels = loadChannels(Users)
+	Channels = loadChannels(Users)
 }
 
 func loadUsers() (newUsersList []User) {

@@ -13,9 +13,9 @@ import (
 )
 
 func GetChannel(name string) (*Channel, error) {
-	index := slices.IndexFunc(channels, func(c Channel) bool { return c.Name == name })
+	index := slices.IndexFunc(Channels, func(c Channel) bool { return c.Name == name })
 	if index != -1 {
-		return &channels[index], nil
+		return &Channels[index], nil
 	}
 
 	return &Channel{}, errors.New("Channel not found")
@@ -46,8 +46,8 @@ func DeleteChannel(channelName string) error {
 		return errors.New("Channel doesn't exists")
 	}
 
-	index := slices.IndexFunc(channels, func(u Channel) bool { return u.Name == channelName })
-	channels = append(channels[:index], channels[index+1:]...)
+	index := slices.IndexFunc(Channels, func(u Channel) bool { return u.Name == channelName })
+	Channels = append(Channels[:index], Channels[index+1:]...)
 	refreshChannelsFile()
 	return nil
 }
@@ -96,7 +96,7 @@ func RemoveFromChannel(channelName string, username string) error {
 
 func refreshChannelsFile() {
 	var channelsString string
-	for _, x := range channels {
+	for _, x := range Channels {
 		var sb strings.Builder
 		for _, y := range x.Members {
 			sb.WriteString(y.Name)
@@ -109,5 +109,4 @@ func refreshChannelsFile() {
 	defer channelsFile.Close()
 	errutil.CatchFatal(err)
 	channelsFile.WriteString(channelsString)
-
 }
