@@ -38,6 +38,20 @@ func CreateChannel(channelName string) error {
 	return nil
 }
 
+func DeleteChannel(channelName string) error {
+	channelName = strutil.RemoveSpaces(channelName)
+	_, err := GetChannel(channelName)
+
+	if err != nil {
+		return errors.New("Channel doesn't exists")
+	}
+
+	index := slices.IndexFunc(channels, func(u Channel) bool { return u.Name == channelName })
+	channels = append(channels[:index], channels[index+1:]...)
+	refreshChannelsFile()
+	return nil
+}
+
 func AddToChannel(channelName string, username string) error {
 	channel, err := GetChannel(channelName)
 	if err != nil {
