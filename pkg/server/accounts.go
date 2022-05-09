@@ -19,7 +19,7 @@ func authByPassword(username string, password string) bool {
 	return user.PasswordHash == strutil.Sha256(password)
 }
 
-func checkPermission(username string, channel database.Channel) error {
+func checkPermission(username string, channel *database.Channel) error {
 	for _, x := range channel.Members {
 		if x.Name == username {
 			return nil

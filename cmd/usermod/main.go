@@ -11,9 +11,9 @@ var rootPath *string
 
 func main() {
 	rootPath = flag.String("r", "ydb", "database root path")
+	addUsername := flag.String("a", "", "add user to channel")
+	delUsername := flag.String("d", "", "remove user from channel")
 	channelName := flag.String("c", "", "channel name")
-	addUsername := flag.String("a", "", "add user")
-	delUsername := flag.String("d", "", "delete user")
 	flag.Parse()
 
 	if *addUsername != "" {
