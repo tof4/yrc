@@ -16,3 +16,6 @@
 
 ydb
 test.txt
+bin
+*.log
+*.zip
