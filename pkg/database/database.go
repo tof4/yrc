@@ -58,22 +58,21 @@ func loadChannels(users []User) (channelsList []Channel) {
 
 	for scanner.Scan() {
 		channelProperties := strings.Split(scanner.Text(), " ")
-		channelMembersStrings := strings.Split(channelProperties[1], ",")
-
 		channel := Channel{
-			Name:    channelProperties[0],
-			Members: []*User{},
+			Name: channelProperties[0],
 		}
 
-		for _, x := range channelMembersStrings {
-			user, err := GetUser(x)
-			if err == nil {
-				channel.Members = append(channel.Members, user)
+		if len(channelProperties) != 1 {
+			channelMembersString := strings.Split(channelProperties[1], ",")
+			for _, x := range channelMembersString {
+				user, err := GetUser(x)
+				if err == nil {
+					channel.Members = append(channel.Members, user)
+				}
 			}
 		}
 
 		channelsList = append(channelsList, channel)
 	}
-
 	return
 }
